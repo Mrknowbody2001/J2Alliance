@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "J2Alliance | Online Store",
   description:
-    "Shop gems, hand crafts, home accessories, and Swiss watches from J2Alliance Pvt Ltd.",
+    "Shop gems, hand crafts, home accessories, and Swiss watches from J2Alliance.",
 };
 
 export default async function HomePage() {

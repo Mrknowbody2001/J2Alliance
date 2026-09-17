@@ -3,10 +3,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   SectionHeading,
   StorefrontFooter,
@@ -55,7 +52,7 @@ const fallbackHeroSlides = [
     id: "fallback-hero-1",
     imageUrl: "/image/hero-banner-01.png",
     eyebrow: "Online Store",
-    title: "JS Pvt Ltd",
+    title: "J2Alliance",
     copy: "Explore curated gems, hand crafts, home accents, Swiss watches, and new arrivals in one place.",
   },
   {
@@ -98,13 +95,10 @@ export default function StorefrontHome({
 
   const activeHeroSlide = activeSlide % visibleHeroSlides.length;
 
-  const trendingProducts = useMemo(
-    () => {
-      const rotated = [...products.slice(4), ...products.slice(0, 4)];
-      return rotated.slice(0, 8);
-    },
-    [products]
-  );
+  const trendingProducts = useMemo(() => {
+    const rotated = [...products.slice(4), ...products.slice(0, 4)];
+    return rotated.slice(0, 8);
+  }, [products]);
 
   const latestProducts = products.slice(0, 8);
 
@@ -120,7 +114,9 @@ export default function StorefrontHome({
             <div
               key={slide.id}
               className={`absolute inset-0 transition-opacity duration-700 ${
-                activeHeroSlide === index ? "opacity-100" : "pointer-events-none opacity-0"
+                activeHeroSlide === index
+                  ? "opacity-100"
+                  : "pointer-events-none opacity-0"
               }`}
             >
               <img
@@ -171,7 +167,9 @@ export default function StorefrontHome({
                   type="button"
                   onClick={() => setActiveSlide(index)}
                   className={`h-2 rounded-full transition-all ${
-                    activeHeroSlide === index ? "w-10 bg-[#d5aa42]" : "w-2 bg-white/45"
+                    activeHeroSlide === index
+                      ? "w-10 bg-[#d5aa42]"
+                      : "w-2 bg-white/45"
                   }`}
                   aria-label={`Open ${slide.title}`}
                 />
@@ -184,7 +182,7 @@ export default function StorefrontHome({
                   setActiveSlide(
                     (current) =>
                       (current - 1 + visibleHeroSlides.length) %
-                      visibleHeroSlides.length
+                      visibleHeroSlides.length,
                   )
                 }
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-black/24 text-white backdrop-blur transition hover:border-[#d5aa42] hover:text-[#f4c95d]"
@@ -196,7 +194,7 @@ export default function StorefrontHome({
                 type="button"
                 onClick={() =>
                   setActiveSlide(
-                    (current) => (current + 1) % visibleHeroSlides.length
+                    (current) => (current + 1) % visibleHeroSlides.length,
                   )
                 }
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-black/24 text-white backdrop-blur transition hover:border-[#d5aa42] hover:text-[#f4c95d]"
@@ -219,7 +217,8 @@ export default function StorefrontHome({
               Popular Picks
             </h2>
             <p className="mt-4 text-sm leading-7 text-white/60 sm:text-base">
-              A quick look at products worth highlighting from the current catalog.
+              A quick look at products worth highlighting from the current
+              catalog.
             </p>
           </div>
           <CompactProductRow
@@ -237,7 +236,10 @@ export default function StorefrontHome({
             title="New Arrivals"
             copy="Fresh products from the catalog, shown with their original product images."
           />
-          <Link href="/shop" className="text-sm font-bold uppercase tracking-[0.16em] text-[#9d7415] hover:text-[#111]">
+          <Link
+            href="/shop"
+            className="text-sm font-bold uppercase tracking-[0.16em] text-[#9d7415] hover:text-[#111]"
+          >
             View Shop
           </Link>
         </div>
@@ -272,7 +274,9 @@ export default function StorefrontHome({
                   <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#f4c95d]">
                     View Collection
                   </p>
-                  <h3 className="font-heading mt-2 text-3xl font-semibold">{item.categoryName}</h3>
+                  <h3 className="font-heading mt-2 text-3xl font-semibold">
+                    {item.categoryName}
+                  </h3>
                 </div>
               </Link>
             ))}
@@ -332,11 +336,19 @@ function CompactProductRow({
   );
 }
 
-function EmptyState({ message, dark = false }: { message: string; dark?: boolean }) {
+function EmptyState({
+  message,
+  dark = false,
+}: {
+  message: string;
+  dark?: boolean;
+}) {
   return (
     <div
       className={`rounded-md border border-dashed p-8 text-sm leading-7 ${
-        dark ? "border-white/18 bg-white/[0.04] text-white/62 sm:col-span-2 lg:col-span-4" : "border-[#d8ceb9] bg-[#faf8f2] text-[#686868]"
+        dark
+          ? "border-white/18 bg-white/[0.04] text-white/62 sm:col-span-2 lg:col-span-4"
+          : "border-[#d8ceb9] bg-[#faf8f2] text-[#686868]"
       }`}
     >
       {message}

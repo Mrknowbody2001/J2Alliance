@@ -10,8 +10,9 @@ import { listCategoriesWithSubCategories } from "@/services/category.service";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "About Us | JS Pvt Ltd",
-  description: "Learn about JS Pvt Ltd and its premium lifestyle e-commerce experience.",
+  title: "About Us | J2Alliance",
+  description:
+    "Learn about J2Alliance and its premium lifestyle e-commerce experience.",
 };
 
 const values = [
@@ -48,13 +49,15 @@ export default async function AboutPage() {
       <section className="bg-[#111] text-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">
-            About JS Pvt Ltd
+            About J2Alliance
           </p>
           <h1 className="font-heading mt-3 max-w-4xl text-5xl font-semibold leading-[0.95] text-white sm:text-7xl">
             A refined destination for premium lifestyle collections.
           </h1>
           <p className="mt-6 max-w-2xl text-sm leading-7 text-white/62 sm:text-base">
-            JS Pvt Ltd brings together gems, hand crafts, home accessories, and Swiss watches in a clean e-commerce experience built for trust and easy discovery.
+            J2Alliance brings together gems, hand crafts, home accessories, and
+            Swiss watches in a clean e-commerce experience built for trust and
+            easy discovery.
           </p>
         </div>
       </section>
@@ -67,10 +70,14 @@ export default async function AboutPage() {
         />
         <div className="space-y-6 text-sm leading-8 text-[#5d5d5d] sm:text-base">
           <p>
-            JS Pvt Ltd is presented as a premium multi-category store where customers can explore distinctive pieces across personal, gift, and home-focused collections.
+            J2Alliance is presented as a premium multi-category store where
+            customers can explore distinctive pieces across personal, gift, and
+            home-focused collections.
           </p>
           <p>
-            The storefront emphasizes clarity: dynamic categories, live product data, original product photos, and a calm visual system that lets the catalog carry the experience.
+            The storefront emphasizes clarity: dynamic categories, live product
+            data, original product photos, and a calm visual system that lets
+            the catalog carry the experience.
           </p>
         </div>
       </section>
@@ -84,7 +91,10 @@ export default async function AboutPage() {
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {values.map(({ title, copy, Icon }) => (
-              <article key={title} className="rounded-md border border-[#e7e2d8] bg-white p-6 shadow-sm">
+              <article
+                key={title}
+                className="rounded-md border border-[#e7e2d8] bg-white p-6 shadow-sm"
+              >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#111] text-[#f4c95d]">
                   <Icon className="h-5 w-5" />
                 </span>
@@ -102,10 +112,13 @@ export default async function AboutPage() {
             Customer Commitment
           </p>
           <h2 className="font-heading mt-3 text-4xl font-semibold sm:text-5xl">
-            A professional shopping experience from first look to final decision.
+            A professional shopping experience from first look to final
+            decision.
           </h2>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-white/62 sm:text-base">
-            The site is designed to support transparent product browsing, straightforward navigation, and clear contact paths for customer enquiries.
+            The site is designed to support transparent product browsing,
+            straightforward navigation, and clear contact paths for customer
+            enquiries.
           </p>
         </div>
       </section>

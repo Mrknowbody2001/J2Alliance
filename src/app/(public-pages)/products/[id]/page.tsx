@@ -19,17 +19,19 @@ type PageProps = {
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { id } = await params;
   const product = await getProductById(id);
 
   if (!product) {
-    return { title: "Product | JS Pvt Ltd" };
+    return { title: "Product | J2Alliance" };
   }
 
   return {
-    title: `${product.seoTitle || product.title} | JS Pvt Ltd`,
-    description: product.seoDesc || `View ${product.title} at JS Pvt Ltd.`,
+    title: `${product.seoTitle || product.title} | J2Alliance`,
+    description: product.seoDesc || `View ${product.title} at J2Alliance.`,
   };
 }
 
@@ -45,7 +47,12 @@ export default async function ProductDetailsPage({ params }: PageProps) {
   }
 
   const navCategories = categories;
-  const images = product.images.length > 0 ? product.images : product.thumbnail ? [product.thumbnail] : [];
+  const images =
+    product.images.length > 0
+      ? product.images
+      : product.thumbnail
+        ? [product.thumbnail]
+        : [];
   const primaryImage = product.thumbnail ?? images[0] ?? null;
 
   return (
@@ -63,15 +70,16 @@ export default async function ProductDetailsPage({ params }: PageProps) {
         <div className="mt-8 grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="grid gap-4 lg:grid-cols-[92px_1fr]">
             <div className="order-2 flex gap-3 overflow-x-auto lg:order-1 lg:flex-col lg:overflow-visible">
-              {(images.length > 0 ? images : [primaryImage]).map((image, index) =>
-                image ? (
-                  <img
-                    key={`${image}-${index}`}
-                    src={image}
-                    alt={`${product.title} thumbnail ${index + 1}`}
-                    className="h-20 w-20 shrink-0 rounded-md border border-[#e5ddcb] object-cover"
-                  />
-                ) : null
+              {(images.length > 0 ? images : [primaryImage]).map(
+                (image, index) =>
+                  image ? (
+                    <img
+                      key={`${image}-${index}`}
+                      src={image}
+                      alt={`${product.title} thumbnail ${index + 1}`}
+                      className="h-20 w-20 shrink-0 rounded-md border border-[#e5ddcb] object-cover"
+                    />
+                  ) : null,
               )}
             </div>
             <div className="order-1 overflow-hidden rounded-md bg-[#f5f2eb] lg:order-2">
@@ -96,24 +104,36 @@ export default async function ProductDetailsPage({ params }: PageProps) {
             <h1 className="font-heading mt-3 text-5xl font-semibold leading-[0.96] text-[#111] sm:text-6xl">
               {product.title}
             </h1>
-            <p className="mt-5 text-2xl font-bold text-[#111]">{formatPrice(product.price)}</p>
+            <p className="mt-5 text-2xl font-bold text-[#111]">
+              {formatPrice(product.price)}
+            </p>
 
             <div className="mt-7 rounded-md border border-[#e7e2d8] bg-[#faf8f2] p-5">
               <div className="flex items-center gap-3 text-sm font-semibold text-[#111]">
                 <ShieldCheck className="h-5 w-5 text-[#b58518]" />
-                <span>Availability: Contact store to confirm current stock</span>
+                <span>
+                  Availability: Contact store to confirm current stock
+                </span>
               </div>
             </div>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <div className="inline-flex h-12 items-center overflow-hidden rounded-md border border-[#e2d8c7]">
-                <button type="button" className="inline-flex h-12 w-12 items-center justify-center text-[#555]" aria-label="Decrease quantity">
+                <button
+                  type="button"
+                  className="inline-flex h-12 w-12 items-center justify-center text-[#555]"
+                  aria-label="Decrease quantity"
+                >
                   <Minus className="h-4 w-4" />
                 </button>
                 <span className="inline-flex h-12 w-12 items-center justify-center border-x border-[#e2d8c7] text-sm font-bold">
                   1
                 </span>
-                <button type="button" className="inline-flex h-12 w-12 items-center justify-center text-[#555]" aria-label="Increase quantity">
+                <button
+                  type="button"
+                  className="inline-flex h-12 w-12 items-center justify-center text-[#555]"
+                  aria-label="Increase quantity"
+                >
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
@@ -134,7 +154,9 @@ export default async function ProductDetailsPage({ params }: PageProps) {
             </div>
 
             <div className="mt-8 border-t border-[#eee7da] pt-8">
-              <h2 className="text-lg font-bold text-[#111]">Product Information</h2>
+              <h2 className="text-lg font-bold text-[#111]">
+                Product Information
+              </h2>
               <RichTextContent
                 content={product.description}
                 className="mt-4 text-sm leading-8 text-[#5d5d5d]"

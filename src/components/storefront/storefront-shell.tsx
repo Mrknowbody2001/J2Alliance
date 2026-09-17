@@ -51,7 +51,11 @@ const navItems = [
   { label: "Contact", href: "/contact" },
 ];
 
-export function StorefrontHeader({ categories = [] }: { categories?: ShellCategory[] }) {
+export function StorefrontHeader({
+  categories = [],
+}: {
+  categories?: ShellCategory[];
+}) {
   const [open, setOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
@@ -88,7 +92,7 @@ export function StorefrontHeader({ categories = [] }: { categories?: ShellCatego
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
         <Link href="/" className="flex min-w-fit flex-col leading-none">
           <span className="font-heading text-3xl font-semibold tracking-[0.08em]">
-            JS Pvt Ltd
+            J2Alliance
           </span>
           <span className="mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[#d5aa42]">
             Online Store
@@ -133,12 +137,15 @@ export function StorefrontHeader({ categories = [] }: { categories?: ShellCatego
                       const isExpanded = category.id === activeCategoryId;
 
                       return (
-                        <div key={category.id} className="rounded-sm bg-white/[0.03]">
+                        <div
+                          key={category.id}
+                          className="rounded-sm bg-white/[0.03]"
+                        >
                           <button
                             type="button"
                             onClick={() =>
                               setActiveCategoryId((current) =>
-                                current === category.id ? null : category.id
+                                current === category.id ? null : category.id,
                               )
                             }
                             className="flex min-h-11 w-full items-center justify-between gap-3 px-3 text-left text-sm font-semibold text-white/82 transition hover:bg-white/8 hover:text-[#f4c95d]"
@@ -226,7 +233,7 @@ export function StorefrontHeader({ categories = [] }: { categories?: ShellCatego
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-[#d5aa42]">
                   Menu
                 </p>
-                <p className="font-heading mt-1 text-3xl">JS Pvt Ltd</p>
+                <p className="font-heading mt-1 text-3xl">J2Alliance</p>
               </div>
               <button
                 type="button"
@@ -258,7 +265,10 @@ export function StorefrontHeader({ categories = [] }: { categories?: ShellCatego
                 </p>
                 <div className="grid gap-2">
                   {categories.map((category) => (
-                    <div key={category.id} className="rounded-md bg-white/[0.04] p-1">
+                    <div
+                      key={category.id}
+                      className="rounded-md bg-white/[0.04] p-1"
+                    >
                       <Link
                         href={`/categories/${category.id}`}
                         onClick={() => setOpen(false)}
@@ -266,20 +276,21 @@ export function StorefrontHeader({ categories = [] }: { categories?: ShellCatego
                       >
                         {category.name}
                       </Link>
-                      {category.subcategories && category.subcategories.length > 0 && (
-                        <div className="mb-1 ml-3 grid gap-1 border-l border-white/10 pl-3">
-                          {category.subcategories.map((subcategory) => (
-                            <Link
-                              key={subcategory.id}
-                              href={`/categories/${category.id}/${subcategory.id}`}
-                              onClick={() => setOpen(false)}
-                              className="py-1.5 text-xs text-white/58 transition hover:text-[#f4c95d]"
-                            >
-                              {subcategory.name}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
+                      {category.subcategories &&
+                        category.subcategories.length > 0 && (
+                          <div className="mb-1 ml-3 grid gap-1 border-l border-white/10 pl-3">
+                            {category.subcategories.map((subcategory) => (
+                              <Link
+                                key={subcategory.id}
+                                href={`/categories/${category.id}/${subcategory.id}`}
+                                onClick={() => setOpen(false)}
+                                className="py-1.5 text-xs text-white/58 transition hover:text-[#f4c95d]"
+                              >
+                                {subcategory.name}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
                     </div>
                   ))}
                 </div>
@@ -304,14 +315,22 @@ export function SectionHeading({
   align?: "left" | "center";
 }) {
   return (
-    <div className={align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
+    <div
+      className={
+        align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"
+      }
+    >
       <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#b58518]">
         {eyebrow}
       </p>
       <h2 className="font-heading mt-3 text-4xl font-semibold leading-[0.98] text-[#111] sm:text-5xl">
         {title}
       </h2>
-      {copy && <p className="mt-4 text-sm leading-7 text-[#5d5d5d] sm:text-base">{copy}</p>}
+      {copy && (
+        <p className="mt-4 text-sm leading-7 text-[#5d5d5d] sm:text-base">
+          {copy}
+        </p>
+      )}
     </div>
   );
 }
@@ -319,7 +338,10 @@ export function SectionHeading({
 export function ProductCard({ product }: { product: ShellProduct }) {
   return (
     <article className="group overflow-hidden rounded-md border border-[#e7e2d8] bg-white shadow-[0_18px_42px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:border-[#d5aa42] hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)]">
-      <Link href={`/products/${product.id}`} className="block overflow-hidden bg-[#f5f2eb]">
+      <Link
+        href={`/products/${product.id}`}
+        className="block overflow-hidden bg-[#f5f2eb]"
+      >
         {product.image ? (
           <img
             src={product.image}
@@ -354,7 +376,9 @@ export function ProductCard({ product }: { product: ShellProduct }) {
           </button>
         </div>
         <div className="flex items-center justify-between gap-3 border-t border-[#eee9df] pt-3">
-          <p className="text-sm font-bold text-[#111]">{formatPrice(product.price)}</p>
+          <p className="text-sm font-bold text-[#111]">
+            {formatPrice(product.price)}
+          </p>
           <Link
             href={`/products/${product.id}`}
             className="inline-flex items-center justify-center rounded-md bg-[#111] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#d5aa42] hover:text-[#111]"
@@ -367,7 +391,11 @@ export function ProductCard({ product }: { product: ShellProduct }) {
   );
 }
 
-export function StorefrontFooter({ categories = [] }: { categories?: ShellCategory[] }) {
+export function StorefrontFooter({
+  categories = [],
+}: {
+  categories?: ShellCategory[];
+}) {
   const footerCategories =
     categories.length > 0
       ? categories
@@ -383,10 +411,11 @@ export function StorefrontFooter({ categories = [] }: { categories?: ShellCatego
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-10">
         <div>
           <p className="font-heading text-4xl font-semibold tracking-[0.06em]">
-            JS Pvt Ltd
+            J2Alliance
           </p>
           <p className="mt-4 text-sm leading-7 text-white/58">
-            Shop gems, hand crafts, home accessories, Swiss watches, and fresh catalog arrivals.
+            Shop gems, hand crafts, home accessories, Swiss watches, and fresh
+            catalog arrivals.
           </p>
           <div className="mt-5 flex gap-2">
             {[Globe, AtSign, Share2].map((Icon, index) => (
@@ -427,7 +456,11 @@ export function StorefrontFooter({ categories = [] }: { categories?: ShellCatego
             {footerCategories.slice(0, 6).map((category) => (
               <Link
                 key={category.id}
-                href={category.id.length > 12 ? `/categories/${category.id}` : "/shop"}
+                href={
+                  category.id.length > 12
+                    ? `/categories/${category.id}`
+                    : "/shop"
+                }
                 className="text-sm text-white/62 transition hover:text-[#f4c95d]"
               >
                 {category.name}
@@ -437,7 +470,7 @@ export function StorefrontFooter({ categories = [] }: { categories?: ShellCatego
         </div>
       </div>
       <div className="border-t border-white/10 px-4 py-5 text-center text-xs text-white/45">
-        (c) JS Pvt Ltd. All Rights Reserved.
+        (c) J2Alliance. All Rights Reserved.
       </div>
     </footer>
   );
@@ -469,5 +502,3 @@ function FooterColumn({
     </div>
   );
 }
-
-

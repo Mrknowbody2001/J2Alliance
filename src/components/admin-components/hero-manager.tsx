@@ -482,7 +482,7 @@ export default function HeroManager({ initialHero }: HeroManagerProps) {
                 value={title}
                 maxLength={120}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="JS Pvt Ltd"
+                placeholder="J2Alliance"
               />
               {errors.title && (
                 <p className="text-xs text-red-500">{errors.title}</p>

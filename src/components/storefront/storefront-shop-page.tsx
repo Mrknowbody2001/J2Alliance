@@ -29,12 +29,17 @@ type StorefrontShopPageProps = {
   products: ShopProduct[];
 };
 
-export default function StorefrontShopPage({ categories, products }: StorefrontShopPageProps) {
+export default function StorefrontShopPage({
+  categories,
+  products,
+}: StorefrontShopPageProps) {
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [subCategoryId, setSubCategoryId] = useState("");
 
-  const activeCategory = categories.find((category) => category.id === categoryId);
+  const activeCategory = categories.find(
+    (category) => category.id === categoryId,
+  );
 
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -46,7 +51,8 @@ export default function StorefrontShopPage({ categories, products }: StorefrontS
         product.categoryName?.toLowerCase().includes(term) ||
         product.subCategoryName?.toLowerCase().includes(term);
       const matchesCategory = !categoryId || product.categoryId === categoryId;
-      const matchesSubCategory = !subCategoryId || product.subCategoryId === subCategoryId;
+      const matchesSubCategory =
+        !subCategoryId || product.subCategoryId === subCategoryId;
 
       return matchesSearch && matchesCategory && matchesSubCategory;
     });
@@ -67,7 +73,8 @@ export default function StorefrontShopPage({ categories, products }: StorefrontS
             Explore the Collection
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-7 text-white/62">
-            Search and filter live products from the existing JS Pvt Ltd catalog.
+            Search and filter live products from the existing J2Alliance
+            catalog.
           </p>
         </div>
       </section>
@@ -123,7 +130,9 @@ export default function StorefrontShopPage({ categories, products }: StorefrontS
             eyebrow="Products"
             title={`${filteredProducts.length} item${filteredProducts.length === 1 ? "" : "s"} found`}
           />
-          <p className="text-sm text-[#686868]">Sorted by latest catalog update.</p>
+          <p className="text-sm text-[#686868]">
+            Sorted by latest catalog update.
+          </p>
         </div>
 
         {filteredProducts.length > 0 ? (
