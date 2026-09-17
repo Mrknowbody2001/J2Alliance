@@ -9,6 +9,7 @@ const navItems = [
   { label: "Products", href: "/admin/products" },
   { label: "Create Product", href: "/admin/products/create" },
   { label: "Category Management", href: "/admin/categories" },
+  { label: "Manage Hero", href: "/admin/hero" },
   { label: "Manage Gallery", href: "/admin/gallery" },
 ];
 

@@ -19,9 +19,7 @@ const buildSignature = (params: Record<string, string>, apiSecret: string) => {
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
 
-  return createHash("sha1")
-    .update(`${sortedParams}${apiSecret}`)
-    .digest("hex");
+  return createHash("sha1").update(`${sortedParams}${apiSecret}`).digest("hex");
 };
 
 export async function POST(request: Request) {
@@ -30,6 +28,12 @@ export async function POST(request: Request) {
     const apiSecret =
       process.env.CLOUDINARY_API_SECRET ?? process.env.CLOUDINARY_SECRET;
     const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+    const body = (await request.json()) as {
+      imageData?: string;
+      fileName?: string;
+      subcategoryName?: string;
+    };
+    const imageData = body.imageData?.trim();
 
     if ((!apiKey || !apiSecret) && !uploadPreset) {
       return NextResponse.json(
@@ -37,67 +41,49 @@ export async function POST(request: Request) {
           error:
             "Cloudinary config missing. Set CLOUDINARY_API_KEY + CLOUDINARY_API_SECRET (or CLOUDINARY_KEY + CLOUDINARY_SECRET), or set CLOUDINARY_UPLOAD_PRESET for unsigned uploads.",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
-
-    const body = (await request.json()) as {
-      imageData?: string;
-      fileName?: string;
-    };
-
-    const imageData = body.imageData?.trim();
-    const fileName = body.fileName?.trim();
-
-    if (!imageData || !imageData.startsWith("data:image/")) {
+    if (!imageData?.startsWith("data:image/")) {
       return NextResponse.json(
         { error: "Invalid image data." },
-        { status: 400 }
+        { status: 400 },
       );
     }
-
     if (imageData.length > MAX_IMAGE_SIZE_BYTES * 1.4) {
       return NextResponse.json(
         { error: "Image is too large. Max 10MB." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const timestamp = Math.floor(Date.now() / 1000).toString();
-    const folder = `gallery/${sanitizeSegment("main-gallery")}`;
-
+    const folder = `subcategories/${sanitizeSegment(body.subcategoryName || "collection")}`;
+    const fileName = body.fileName?.trim();
     const formData = new FormData();
     formData.append("file", imageData);
     formData.append("folder", folder);
-
     if (apiKey && apiSecret) {
       const signatureParams: Record<string, string> = { folder, timestamp };
       if (fileName) signatureParams.filename_override = fileName;
-      const signature = buildSignature(signatureParams, apiSecret);
+
       formData.append("api_key", apiKey);
       formData.append("timestamp", timestamp);
-      formData.append("signature", signature);
+      formData.append("signature", buildSignature(signatureParams, apiSecret));
     } else if (uploadPreset) {
       formData.append("upload_preset", uploadPreset);
     }
 
-    if (fileName) {
-      formData.append("filename_override", fileName);
-    }
+    if (fileName) formData.append("filename_override", fileName);
 
     const uploadResponse = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
+      { method: "POST", body: formData },
     );
-
     const uploadData = (await uploadResponse.json()) as {
       secure_url?: string;
       error?: { message?: string };
     };
-
     if (!uploadResponse.ok || !uploadData.secure_url) {
       return NextResponse.json(
         {
@@ -105,16 +91,15 @@ export async function POST(request: Request) {
             uploadData.error?.message ??
             "Failed to upload image to Cloudinary.",
         },
-        { status: 502 }
+        { status: 502 },
       );
     }
-
-    return NextResponse.json({ secureUrl: uploadData.secure_url, folder });
+    return NextResponse.json({ secureUrl: uploadData.secure_url });
   } catch (error) {
-    console.error("POST /api/uploads/gallery-image error", error);
+    console.error("POST /api/uploads/subcategory-image error", error);
     return NextResponse.json(
       { error: "Unexpected upload error." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

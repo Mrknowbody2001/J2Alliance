@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     }
 
     const timestamp = Math.floor(Date.now() / 1000).toString();
-    const folder = `gallery/${sanitizeSegment("main-gallery")}`;
+    const folder = `hero/${sanitizeSegment("home-hero")}`;
 
     const formData = new FormData();
     formData.append("file", imageData);
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ secureUrl: uploadData.secure_url, folder });
   } catch (error) {
-    console.error("POST /api/uploads/gallery-image error", error);
+    console.error("POST /api/uploads/hero-image error", error);
     return NextResponse.json(
       { error: "Unexpected upload error." },
       { status: 500 }

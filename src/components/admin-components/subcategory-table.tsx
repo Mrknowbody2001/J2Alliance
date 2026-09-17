@@ -54,6 +54,7 @@ export default function SubCategoryTable({ subcategories }: SubCategoryTableProp
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Sub Category</TableHead>
+            <TableHead>Image</TableHead>
             <TableHead>Main Category</TableHead>
             <TableHead>Updated</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -67,6 +68,9 @@ export default function SubCategoryTable({ subcategories }: SubCategoryTableProp
               </TableCell>
               <TableCell className="font-medium text-zinc-900">
                 {subcategory.name}
+              </TableCell>
+              <TableCell>
+                {subcategory.imageUrl ? <img src={subcategory.imageUrl} alt="" className="h-9 w-9 rounded-full object-cover" /> : <span className="text-xs text-zinc-400">None</span>}
               </TableCell>
               <TableCell>{subcategory.categoryName}</TableCell>
               <TableCell>

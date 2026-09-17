@@ -47,17 +47,20 @@ export type CategoryWithSubCategoriesDTO = {
   subcategories: {
     id: string;
     name: string;
+    imageUrl: string | null;
   }[];
 };
 
 export type SubCategoryInput = {
   name: string;
+  imageUrl?: string | null;
   categoryId: string;
 };
 
 export type SubCategoryDTO = {
   id: string;
   name: string;
+  imageUrl: string | null;
   categoryId: string;
   categoryName: string;
   createdAt: string;
@@ -88,6 +91,37 @@ export type GallerySectionDTO = {
   id: string;
   maxItems: number;
   items: GalleryItemDTO[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type HeroSectionInput = {
+  maxSlides: number;
+};
+
+export type HeroSlideInput = {
+  imageUrl: string;
+  eyebrow?: string | null;
+  title: string;
+  copy?: string | null;
+  position?: number;
+};
+
+export type HeroSlideDTO = {
+  id: string;
+  imageUrl: string;
+  eyebrow: string | null;
+  title: string;
+  copy: string | null;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type HeroSectionDTO = {
+  id: string;
+  maxSlides: number;
+  slides: HeroSlideDTO[];
   createdAt: string;
   updatedAt: string;
 };

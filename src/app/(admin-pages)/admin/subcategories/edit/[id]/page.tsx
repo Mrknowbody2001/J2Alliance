@@ -40,6 +40,7 @@ export default async function EditSubCategoryPage({
         }))}
         initialData={{
           name: subcategory.name,
+          imageUrl: subcategory.imageUrl,
           categoryId: subcategory.categoryId,
         }}
       />

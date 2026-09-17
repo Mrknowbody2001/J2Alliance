@@ -6,17 +6,10 @@ import { ChangeEvent, useMemo, useState } from "react";
 import { ImagePlus, LoaderCircle, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { GallerySectionDTO } from "@/types";
-import CategorySearchSelect from "@/components/admin-components/category-search-select";
+import type { HeroSectionDTO } from "@/types";
 
-type CategoryOption = {
-  id: string;
-  name: string;
-};
-
-type GalleryManagerProps = {
-  categories: CategoryOption[];
-  initialGallery: GallerySectionDTO;
+type HeroManagerProps = {
+  initialHero: HeroSectionDTO;
 };
 
 type NoticeState = {
@@ -24,15 +17,21 @@ type NoticeState = {
   message: string;
 };
 
-const isGallerySectionDTO = (
-  value: GallerySectionDTO | { error?: string } | null
-): value is GallerySectionDTO =>
-  Boolean(value && "id" in value && "maxItems" in value && "items" in value);
+const isHeroSectionDTO = (
+  value: HeroSectionDTO | { error?: string } | null
+): value is HeroSectionDTO =>
+  Boolean(value && "id" in value && "maxSlides" in value && "slides" in value);
 
-const isGalleryItemDTO = (
-  value: GallerySectionDTO["items"][number] | { error?: string } | null
-): value is GallerySectionDTO["items"][number] =>
+const isHeroSlideDTO = (
+  value: HeroSectionDTO["slides"][number] | { error?: string } | null
+): value is HeroSectionDTO["slides"][number] =>
   Boolean(value && "id" in value && "imageUrl" in value && "position" in value);
+
+const emptyErrors = {
+  imageUrl: "",
+  title: "",
+  maxSlides: "",
+};
 
 const toDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
@@ -67,54 +66,49 @@ const readImageDimensions = (file: File) =>
     image.src = objectUrl;
   });
 
-const emptyErrors = {
-  imageUrl: "",
-  categoryId: "",
-  maxItems: "",
-};
-
-export default function GalleryManager({
-  categories,
-  initialGallery,
-}: GalleryManagerProps) {
-  const [gallery, setGallery] = useState(initialGallery);
-  const [maxItems, setMaxItems] = useState(String(initialGallery.maxItems));
+export default function HeroManager({ initialHero }: HeroManagerProps) {
+  const [hero, setHero] = useState(initialHero);
+  const [maxSlides, setMaxSlides] = useState(String(initialHero.maxSlides));
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
+  const [eyebrow, setEyebrow] = useState("");
+  const [title, setTitle] = useState("");
+  const [copy, setCopy] = useState("");
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSavingSettings, setIsSavingSettings] = useState(false);
-  const [isSavingItem, setIsSavingItem] = useState(false);
+  const [isSavingSlide, setIsSavingSlide] = useState(false);
   const [notice, setNotice] = useState<NoticeState | null>(null);
   const [errors, setErrors] = useState(emptyErrors);
 
   const remainingSlots = useMemo(
-    () => Math.max(gallery.maxItems - gallery.items.length, 0),
-    [gallery.items.length, gallery.maxItems]
+    () => Math.max(hero.maxSlides - hero.slides.length, 0),
+    [hero.maxSlides, hero.slides.length]
   );
 
-  const resetItemForm = () => {
+  const resetSlideForm = () => {
     setEditingId(null);
-    setSelectedCategoryId("");
     setUploadedImageUrl("");
     setPreviewUrl("");
+    setEyebrow("");
+    setTitle("");
+    setCopy("");
     setErrors((current) => ({
       ...current,
       imageUrl: "",
-      categoryId: "",
+      title: "",
     }));
   };
 
-  const uploadGalleryImage = async (file: File) => {
+  const uploadHeroImage = async (file: File) => {
     const dimensions = await readImageDimensions(file);
 
-    if (dimensions.width !== 800 || dimensions.height !== 800) {
-      throw new Error("Gallery images must be exactly 800 x 800 pixels.");
+    if (dimensions.width < 1200 || dimensions.height < 520) {
+      throw new Error("Hero images should be at least 1200 x 520 pixels.");
     }
 
     const imageData = await toDataUrl(file);
-    const response = await fetch("/api/uploads/gallery-image", {
+    const response = await fetch("/api/uploads/hero-image", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -130,7 +124,7 @@ export default function GalleryManager({
       | null;
 
     if (!response.ok || !data?.secureUrl) {
-      throw new Error(data?.error ?? "Failed to upload gallery image.");
+      throw new Error(data?.error ?? "Failed to upload hero image.");
     }
 
     return data.secureUrl;
@@ -149,7 +143,7 @@ export default function GalleryManager({
     setIsUploadingImage(true);
 
     try {
-      const secureUrl = await uploadGalleryImage(file);
+      const secureUrl = await uploadHeroImage(file);
       setUploadedImageUrl(secureUrl);
       setPreviewUrl(secureUrl);
     } catch (error) {
@@ -165,14 +159,14 @@ export default function GalleryManager({
 
   const handleSaveSettings = async () => {
     setNotice(null);
-    setErrors((current) => ({ ...current, maxItems: "" }));
+    setErrors((current) => ({ ...current, maxSlides: "" }));
 
-    const parsed = Number(maxItems);
+    const parsed = Number(maxSlides);
 
     if (!Number.isInteger(parsed) || parsed < 1) {
       setErrors((current) => ({
         ...current,
-        maxItems: "Enter a whole number greater than 0.",
+        maxSlides: "Enter a whole number greater than 0.",
       }));
       return;
     }
@@ -180,60 +174,62 @@ export default function GalleryManager({
     setIsSavingSettings(true);
 
     try {
-      const response = await fetch("/api/gallery", {
+      const response = await fetch("/api/hero", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ maxItems: parsed }),
+        body: JSON.stringify({ maxSlides: parsed }),
       });
 
       const data = (await response.json().catch(() => null)) as
-        | GallerySectionDTO
+        | HeroSectionDTO
         | { error?: string }
         | null;
 
-      if (!response.ok || !isGallerySectionDTO(data)) {
+      if (!response.ok || !isHeroSectionDTO(data)) {
         throw new Error(
-          data && "error" in data ? data.error : "Failed to update gallery."
+          data && "error" in data ? data.error : "Failed to update hero."
         );
       }
 
-      setGallery(data);
-      setMaxItems(String(data.maxItems));
+      setHero(data);
+      setMaxSlides(String(data.maxSlides));
       setNotice({
         type: "success",
-        message: "Gallery settings updated.",
+        message: "Hero slide limit updated.",
       });
     } catch (error) {
       setErrors((current) => ({
         ...current,
-        maxItems:
+        maxSlides:
           error instanceof Error
             ? error.message
-            : "Failed to update gallery settings.",
+            : "Failed to update hero settings.",
       }));
     } finally {
       setIsSavingSettings(false);
     }
   };
 
-  const handleEditItem = (item: GallerySectionDTO["items"][number]) => {
+  const handleEditSlide = (slide: HeroSectionDTO["slides"][number]) => {
     setNotice(null);
-    setEditingId(item.id);
-    setSelectedCategoryId(item.categoryId);
-    setUploadedImageUrl(item.imageUrl);
-    setPreviewUrl(item.imageUrl);
+    setEditingId(slide.id);
+    setUploadedImageUrl(slide.imageUrl);
+    setPreviewUrl(slide.imageUrl);
+    setEyebrow(slide.eyebrow ?? "");
+    setTitle(slide.title);
+    setCopy(slide.copy ?? "");
     setErrors((current) => ({
       ...current,
       imageUrl: "",
-      categoryId: "",
+      title: "",
     }));
   };
 
-  const handleDeleteItem = async (id: string) => {
+  const handleDeleteSlide = async (id: string) => {
     setNotice(null);
 
     try {
-      const response = await fetch(`/api/gallery-items/${id}`, {
+      const response = await fetch(`/api/hero-slides/${id}`, {
         method: "DELETE",
       });
 
@@ -241,37 +237,37 @@ export default function GalleryManager({
         const data = (await response.json().catch(() => null)) as
           | { error?: string }
           | null;
-        throw new Error(data?.error ?? "Failed to delete gallery image.");
+        throw new Error(data?.error ?? "Failed to delete hero slide.");
       }
 
-      setGallery((current) => ({
+      setHero((current) => ({
         ...current,
-        items: current.items.filter((item) => item.id !== id),
+        slides: current.slides.filter((slide) => slide.id !== id),
       }));
 
       if (editingId === id) {
-        resetItemForm();
+        resetSlideForm();
       }
 
       setNotice({
         type: "success",
-        message: "Gallery image deleted.",
+        message: "Hero slide deleted.",
       });
     } catch (error) {
       setNotice({
         type: "error",
         message:
-          error instanceof Error ? error.message : "Failed to delete image.",
+          error instanceof Error ? error.message : "Failed to delete slide.",
       });
     }
   };
 
-  const handleSaveItem = async () => {
+  const handleSaveSlide = async () => {
     setNotice(null);
     setErrors((current) => ({
       ...current,
       imageUrl: uploadedImageUrl ? "" : current.imageUrl,
-      categoryId: selectedCategoryId ? "" : current.categoryId,
+      title: title.trim() ? "" : current.title,
     }));
 
     let hasErrors = false;
@@ -280,15 +276,15 @@ export default function GalleryManager({
       hasErrors = true;
       setErrors((current) => ({
         ...current,
-        imageUrl: "Upload an 800 x 800 gallery image first.",
+        imageUrl: "Upload a hero image first.",
       }));
     }
 
-    if (!selectedCategoryId) {
+    if (!title.trim()) {
       hasErrors = true;
       setErrors((current) => ({
         ...current,
-        categoryId: "Choose the main category for redirect.",
+        title: "Add a slide title.",
       }));
     }
 
@@ -296,112 +292,111 @@ export default function GalleryManager({
       return;
     }
 
-    setIsSavingItem(true);
+    setIsSavingSlide(true);
 
     try {
       const endpoint = editingId
-        ? `/api/gallery-items/${editingId}`
-        : "/api/gallery-items";
+        ? `/api/hero-slides/${editingId}`
+        : "/api/hero-slides";
       const method = editingId ? "PUT" : "POST";
       const response = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageUrl: uploadedImageUrl,
-          categoryId: selectedCategoryId,
+          eyebrow: eyebrow.trim() || null,
+          title: title.trim(),
+          copy: copy.trim() || null,
         }),
       });
 
       const data = (await response.json().catch(() => null)) as
-        | GallerySectionDTO["items"][number]
+        | HeroSectionDTO["slides"][number]
         | { error?: string }
         | null;
 
-      if (!response.ok || !isGalleryItemDTO(data)) {
+      if (!response.ok || !isHeroSlideDTO(data)) {
         throw new Error(
-          data && "error" in data ? data.error : "Failed to save gallery item."
+          data && "error" in data ? data.error : "Failed to save hero slide."
         );
       }
 
-      setGallery((current) => {
-        const existingIndex = current.items.findIndex((item) => item.id === data.id);
+      setHero((current) => {
+        const existingIndex = current.slides.findIndex((slide) => slide.id === data.id);
 
         if (existingIndex >= 0) {
-          const nextItems = [...current.items];
-          nextItems[existingIndex] = data;
+          const nextSlides = [...current.slides];
+          nextSlides[existingIndex] = data;
           return {
             ...current,
-            items: nextItems.sort((first, second) => first.position - second.position),
+            slides: nextSlides.sort((first, second) => first.position - second.position),
           };
         }
 
         return {
           ...current,
-          items: [...current.items, data].sort(
+          slides: [...current.slides, data].sort(
             (first, second) => first.position - second.position
           ),
         };
       });
 
-      resetItemForm();
+      resetSlideForm();
       setNotice({
         type: "success",
-        message: editingId
-          ? "Gallery image updated."
-          : "Gallery image added and linked to its main category.",
+        message: editingId ? "Hero slide updated." : "Hero slide added.",
       });
     } catch (error) {
       setNotice({
         type: "error",
         message:
-          error instanceof Error ? error.message : "Failed to save gallery image.",
+          error instanceof Error ? error.message : "Failed to save hero slide.",
       });
     } finally {
-      setIsSavingItem(false);
+      setIsSavingSlide(false);
     }
   };
 
-  const canAddNewItem = gallery.items.length < gallery.maxItems || Boolean(editingId);
+  const canAddNewSlide = hero.slides.length < hero.maxSlides || Boolean(editingId);
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <section className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="text-xl font-semibold text-zinc-900">Manage your gallery</h2>
+              <h2 className="text-xl font-semibold text-zinc-900">Hero scroller settings</h2>
               <p className="mt-1 text-sm text-zinc-500">
-                Add homepage gallery images, connect each image to a main category,
-                and control how many images the section can hold.
+                Choose how many homepage hero slides can be active in the image scroller.
               </p>
             </div>
             <div className="rounded-full bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-700">
-              {gallery.items.length} / {gallery.maxItems} used
+              {hero.slides.length} / {hero.maxSlides} used
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-[220px_1fr_auto] md:items-end">
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-700">
-                Gallery image limit
+                Hero slide limit
               </label>
               <Input
                 type="number"
                 min={1}
-                max={24}
-                value={maxItems}
-                onChange={(event) => setMaxItems(event.target.value)}
+                max={12}
+                value={maxSlides}
+                onChange={(event) => setMaxSlides(event.target.value)}
               />
               <p className="text-xs text-zinc-500">
-                Default is 4 images. Increase or decrease this when needed.
+                Lower the number after deleting extra previous slides.
               </p>
-              {errors.maxItems && (
-                <p className="text-xs text-red-500">{errors.maxItems}</p>
+              {errors.maxSlides && (
+                <p className="text-xs text-red-500">{errors.maxSlides}</p>
               )}
             </div>
             <div className="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
               Remaining space: <span className="font-semibold">{remainingSlots}</span>
-              {" "}gallery image{remainingSlots === 1 ? "" : "s"}.
+              {" "}slide{remainingSlots === 1 ? "" : "s"}.
             </div>
             <Button onClick={handleSaveSettings} disabled={isSavingSettings}>
               {isSavingSettings ? "Saving..." : "Save Setting"}
@@ -424,28 +419,32 @@ export default function GalleryManager({
         <section className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div>
             <h2 className="text-xl font-semibold text-zinc-900">
-              {editingId ? "Edit gallery image" : "Add gallery image"}
+              {editingId ? "Edit hero slide" : "Add hero slide"}
             </h2>
             <p className="mt-1 text-sm text-zinc-500">
-              Upload a square `800 x 800` image, then choose the main category page
-              users should open after clicking it.
+              Upload a wide image and update the text shown over it on the homepage.
             </p>
           </div>
 
           <div className="space-y-3">
-            <label className="text-sm font-medium text-zinc-700">Gallery image</label>
+            <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+              <span className="font-semibold">Recommended image:</span>{" "}
+              1920 × 840 px (16:7). Use a wide, high-quality image and keep important
+              content away from the outer edges so it stays visible on smaller screens.
+            </div>
+            <label className="text-sm font-medium text-zinc-700">Hero image</label>
             <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-4 text-center transition hover:border-zinc-400 hover:bg-zinc-100">
               {previewUrl ? (
                 <img
                   src={previewUrl}
-                  alt="Gallery preview"
-                  className="h-48 w-48 rounded-2xl object-cover"
+                  alt="Hero preview"
+                  className="aspect-[16/7] w-full rounded-2xl object-cover"
                 />
               ) : (
-                <div className="flex h-48 w-full flex-col items-center justify-center gap-3">
+                <div className="flex aspect-[16/7] w-full flex-col items-center justify-center gap-3">
                   <ImagePlus className="h-8 w-8 text-zinc-400" />
                   <div className="text-sm text-zinc-500">
-                    Click to upload an `800 x 800` image
+                    Click to upload a hero image
                   </div>
                 </div>
               )}
@@ -467,83 +466,109 @@ export default function GalleryManager({
             )}
           </div>
 
-          <CategorySearchSelect
-            key={selectedCategoryId || "empty-category"}
-            value={selectedCategoryId}
-            onChange={setSelectedCategoryId}
-            options={categories}
-            error={errors.categoryId}
-            disabled={categories.length === 0}
-          />
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-zinc-700">Eyebrow</label>
+              <Input
+                value={eyebrow}
+                maxLength={80}
+                onChange={(event) => setEyebrow(event.target.value)}
+                placeholder="Online Store"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-zinc-700">Title</label>
+              <Input
+                value={title}
+                maxLength={120}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder="JS Pvt Ltd"
+              />
+              {errors.title && (
+                <p className="text-xs text-red-500">{errors.title}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-zinc-700">Copy</label>
+              <textarea
+                value={copy}
+                maxLength={240}
+                onChange={(event) => setCopy(event.target.value)}
+                className="min-h-24 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                placeholder="Short text shown below the slide title."
+              />
+            </div>
+          </div>
 
           <div className="flex flex-wrap justify-end gap-3">
-            <Button type="button" variant="outline" onClick={resetItemForm}>
+            <Button type="button" variant="outline" onClick={resetSlideForm}>
               Clear
             </Button>
             <Button
               type="button"
-              onClick={handleSaveItem}
-              disabled={
-                isSavingItem || isUploadingImage || !canAddNewItem || categories.length === 0
-              }
+              onClick={handleSaveSlide}
+              disabled={isSavingSlide || isUploadingImage || !canAddNewSlide}
             >
-              {isSavingItem
-                ? "Saving..."
-                : editingId
-                ? "Done"
-                : "Add To Gallery"}
+              {isSavingSlide ? "Saving..." : editingId ? "Update Slide" : "Add Slide"}
             </Button>
           </div>
 
-          {!canAddNewItem && !editingId && (
+          {!canAddNewSlide && !editingId && (
             <p className="text-sm text-amber-600">
-              Gallery is full. Increase the gallery image limit before adding more.
+              Hero scroller is full. Increase the slide limit before adding more.
             </p>
           )}
         </section>
       </div>
 
       <section className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-semibold text-zinc-900">Current gallery images</h2>
-            <p className="mt-1 text-sm text-zinc-500">
-              Each image redirects to its selected main category page.
-            </p>
-          </div>
+        <div>
+          <h2 className="text-xl font-semibold text-zinc-900">Current hero slides</h2>
+          <p className="mt-1 text-sm text-zinc-500">
+            These slides appear in order on the homepage hero image scroller.
+          </p>
         </div>
 
-        {gallery.items.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {gallery.items.map((item, index) => (
+        {hero.slides.length > 0 ? (
+          <div className="grid gap-4 lg:grid-cols-2">
+            {hero.slides.map((slide, index) => (
               <article
-                key={item.id}
+                key={slide.id}
                 className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50"
               >
                 <img
-                  src={item.imageUrl}
-                  alt={item.categoryName}
-                  className="aspect-square w-full object-cover"
+                  src={slide.imageUrl}
+                  alt={slide.title}
+                  className="aspect-[16/7] w-full object-cover"
                 />
                 <div className="space-y-3 p-4">
                   <div className="flex items-center justify-between gap-3">
                     <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                      Image {index + 1}
+                      Slide {index + 1}
                     </span>
-                    <span className="text-xs text-zinc-400">Order {item.position + 1}</span>
+                    <span className="text-xs text-zinc-400">Order {slide.position + 1}</span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-zinc-500">Redirect to</p>
-                    <p className="text-base font-semibold text-zinc-900">
-                      {item.categoryName}
-                    </p>
+                    {slide.eyebrow && (
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                        {slide.eyebrow}
+                      </p>
+                    )}
+                    <h3 className="mt-1 text-lg font-semibold text-zinc-900">
+                      {slide.title}
+                    </h3>
+                    {slide.copy && (
+                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-zinc-500">
+                        {slide.copy}
+                      </p>
+                    )}
                   </div>
                   <div className="flex gap-2">
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => handleEditItem(item)}
+                      onClick={() => handleEditSlide(slide)}
                     >
                       <Pencil className="mr-2 h-4 w-4" />
                       Edit
@@ -552,7 +577,7 @@ export default function GalleryManager({
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => void handleDeleteItem(item.id)}
+                      onClick={() => void handleDeleteSlide(slide.id)}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete
@@ -564,8 +589,7 @@ export default function GalleryManager({
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 p-8 text-sm text-zinc-500">
-            No gallery images yet. Add your first `800 x 800` image and link it to a
-            main category to activate the homepage gallery section.
+            No hero slides yet. Add one here; until then the storefront uses the default banner images.
           </div>
         )}
       </section>

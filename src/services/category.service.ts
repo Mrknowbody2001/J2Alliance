@@ -29,6 +29,7 @@ export async function listCategoriesWithSubCategories() {
         select: {
           id: true,
           name: true,
+          imageUrl: true,
         },
       },
     },
@@ -48,6 +49,7 @@ export async function getCategoryWithSubCategories(id: string) {
         select: {
           id: true,
           name: true,
+          imageUrl: true,
         },
       },
     },

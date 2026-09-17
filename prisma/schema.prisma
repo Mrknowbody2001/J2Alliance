@@ -50,6 +50,7 @@ model Category {
 model SubCategory {
   id         String   @id @default(cuid())
   name       String
+  imageUrl   String?
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   products   Product[]
@@ -81,4 +82,28 @@ model GalleryItem {
 
   @@index([categoryId])
   @@index([gallerySectionId, position])
+}
+
+model HeroSection {
+  id        String      @id @default(cuid())
+  key       String      @unique @default("home")
+  maxSlides Int         @default(3)
+  slides    HeroSlide[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model HeroSlide {
+  id            String      @id @default(cuid())
+  imageUrl      String
+  eyebrow       String?
+  title         String
+  copy          String?
+  heroSectionId String
+  heroSection   HeroSection @relation(fields: [heroSectionId], references: [id], onDelete: Cascade)
+  position      Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([heroSectionId, position])
 }

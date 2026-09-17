@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
-const CLOUDINARY_CLOUD_NAME = "dnbinkwgg";
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME ?? "dnbinkwgg";
 
 const sanitizeSegment = (value: string) =>
   value
@@ -80,7 +80,9 @@ export async function POST(request: Request) {
     formData.append("folder", folder);
 
     if (apiKey && apiSecret) {
-      const signature = buildSignature({ folder, timestamp }, apiSecret);
+      const signatureParams: Record<string, string> = { folder, timestamp };
+      if (fileName) signatureParams.filename_override = fileName;
+      const signature = buildSignature(signatureParams, apiSecret);
       formData.append("api_key", apiKey);
       formData.append("timestamp", timestamp);
       formData.append("signature", signature);

@@ -27,6 +27,18 @@ export default function AdminDashboard() {
           </Link>
         </div>
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-zinc-900">Homepage Hero</h2>
+          <p className="mt-2 text-sm text-zinc-500">
+            Manage hero image scroller slides, update slide copy, and remove old banners.
+          </p>
+          <Link
+            href="/admin/hero"
+            className="mt-4 inline-flex items-center text-sm font-semibold text-zinc-900 underline-offset-4 hover:underline"
+          >
+            Manage hero slides
+          </Link>
+        </div>
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-zinc-900">Gallery</h2>
           <p className="mt-2 text-sm text-zinc-500">
             Manage your gallery, control how many homepage images you want, and

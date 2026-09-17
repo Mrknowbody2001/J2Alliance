@@ -46,6 +46,10 @@ export default async function SubCategoryDetailPage({
             <p className="mt-2 text-sm text-zinc-600">{subcategory.category.name}</p>
           </div>
           <div>
+            <h2 className="text-sm font-semibold text-zinc-900">Collection Image</h2>
+            {subcategory.imageUrl ? <img src={subcategory.imageUrl} alt={subcategory.name} className="mt-2 h-24 w-24 rounded-full object-cover" /> : <p className="mt-2 text-sm text-zinc-600">No image uploaded.</p>}
+          </div>
+          <div>
             <h2 className="text-sm font-semibold text-zinc-900">Main Category ID</h2>
             <p className="mt-2 break-all text-sm text-zinc-600">
               {subcategory.category.id}
