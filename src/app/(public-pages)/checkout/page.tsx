@@ -161,7 +161,7 @@ export default function CheckoutPage() {
       <section className="bg-[#111] text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
           <Link
-            href="/cart"
+            href="/Cart"
             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-white/60 transition hover:text-[#f4c95d]"
           >
             <ArrowLeft className="h-4 w-4" />

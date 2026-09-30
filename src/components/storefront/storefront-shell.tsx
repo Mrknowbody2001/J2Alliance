@@ -15,6 +15,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import { useWishlistStore } from "@/stores/wishlist.store";
 
 export type ShellCategory = {
   id: string;
@@ -203,17 +204,29 @@ export function StorefrontHeader({
             { Icon: Heart, label: "Wishlist" },
             { Icon: ShoppingBag, label: "Cart" },
             { Icon: User, label: "Account" },
-          ].map(({ Icon, label }) => (
-            <button
-              key={label}
-              type="button"
-              className="hidden h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white transition hover:border-[#d5aa42] hover:text-[#f4c95d] sm:inline-flex"
-              aria-label={label}
-              title={label}
-            >
-              <Icon className="h-4.5 w-4.5" />
-            </button>
-          ))}
+          ].map(({ Icon, label }) =>
+            label === "Wishlist" || label === "Cart" ? (
+              <Link
+                key={label}
+                href={label === "Wishlist" ? "/wishlist" : "/Cart"}
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white transition hover:border-[#d5aa42] hover:text-[#f4c95d] sm:inline-flex"
+                aria-label={label}
+                title={label}
+              >
+                <Icon className="h-4.5 w-4.5" />
+              </Link>
+            ) : (
+              <button
+                key={label}
+                type="button"
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white transition hover:border-[#d5aa42] hover:text-[#f4c95d] sm:inline-flex"
+                aria-label={label}
+                title={label}
+              >
+                <Icon className="h-4.5 w-4.5" />
+              </button>
+            ),
+          )}
           <button
             type="button"
             onClick={() => setOpen(true)}
@@ -256,6 +269,20 @@ export function StorefrontHeader({
                   {item.label}
                 </Link>
               ))}
+              <Link
+                href="/wishlist"
+                onClick={() => setOpen(false)}
+                className="rounded-md border border-white/8 px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-[#d5aa42] hover:text-[#f4c95d]"
+              >
+                Wishlist
+              </Link>
+              <Link
+                href="/Cart"
+                onClick={() => setOpen(false)}
+                className="rounded-md border border-white/8 px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-[#d5aa42] hover:text-[#f4c95d]"
+              >
+                Cart
+              </Link>
             </div>
 
             {categories.length > 0 && (
@@ -336,6 +363,11 @@ export function SectionHeading({
 }
 
 export function ProductCard({ product }: { product: ShellProduct }) {
+  const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
+  const isInWishlist = useWishlistStore((state) =>
+    state.isInWishlist(product.id),
+  );
+
   return (
     <article className="group overflow-hidden rounded-md border border-[#e7e2d8] bg-white shadow-[0_18px_42px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:border-[#d5aa42] hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)]">
       <Link
@@ -368,11 +400,24 @@ export function ProductCard({ product }: { product: ShellProduct }) {
           </div>
           <button
             type="button"
+            onClick={() =>
+              toggleWishlist({
+                productId: product.id,
+                productName: product.title,
+                price: product.price,
+                image: product.image ?? "",
+              })
+            }
             className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e6dfd0] text-[#111] transition hover:border-[#d5aa42] hover:bg-[#fff8e3]"
-            aria-label="Add to wishlist"
-            title="Wishlist"
+            aria-label={
+              isInWishlist ? "Remove from wishlist" : "Add to wishlist"
+            }
+            aria-pressed={isInWishlist}
+            title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <Heart className="h-4 w-4" />
+            <Heart
+              className={`h-4 w-4 ${isInWishlist ? "fill-current text-red-600" : ""}`}
+            />
           </button>
         </div>
         <div className="flex items-center justify-between gap-3 border-t border-[#eee9df] pt-3">

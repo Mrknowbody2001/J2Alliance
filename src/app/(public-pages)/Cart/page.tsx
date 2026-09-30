@@ -74,13 +74,19 @@ export default function CartPage() {
                     <div className="flex gap-4 sm:gap-6">
                       {/* Product Image */}
                       <div className="relative h-28 w-24 shrink-0 overflow-hidden bg-[#f7f4ed] sm:h-36 sm:w-28">
-                        <Image
-                          src={item.image}
-                          alt={item.productName}
-                          fill
-                          sizes="112px"
-                          className="object-cover"
-                        />
+                        {item.image ? (
+                          <Image
+                            src={item.image}
+                            alt={item.productName}
+                            fill
+                            sizes="112px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold uppercase text-[#777]">
+                            Product image
+                          </div>
+                        )}
                       </div>
 
                       {/* Product Info */}
