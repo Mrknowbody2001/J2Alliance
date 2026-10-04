@@ -42,6 +42,8 @@ model Product {
 model Order {
   id          String @id @default(cuid())
   orderNumber String @unique
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   customerFirstName  String
   customerLastName   String
@@ -67,6 +69,23 @@ model Order {
   @@index([orderStatus])
   @@index([paymentStatus])
   @@index([createdAt])
+  @@index([customerId, createdAt])
+}
+
+model CustomerAddress {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  label      String   @default("Home")
+  recipient  String
+  phone      String
+  address    String
+  city       String
+  postalCode String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([customerId])
 }
 
 model OrderItem {
@@ -156,4 +175,28 @@ model HeroSlide {
   updatedAt     DateTime    @updatedAt
 
   @@index([heroSectionId, position])
+}
+
+model AdminProfile {
+  id           String   @id @default("admin")
+  username     String   @unique
+  passwordHash String
+  imageUrl     String?
+  updatedAt    DateTime @updatedAt
+}
+
+model Customer {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  firstName         String
+  lastName          String
+  passwordHash      String
+  phone             String?
+  address           String?
+  city              String?
+  postalCode        String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  orders            Order[]
+  addresses         CustomerAddress[]
 }

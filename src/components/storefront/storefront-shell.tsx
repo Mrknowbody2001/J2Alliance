@@ -205,10 +205,10 @@ export function StorefrontHeader({
             { Icon: ShoppingBag, label: "Cart" },
             { Icon: User, label: "Account" },
           ].map(({ Icon, label }) =>
-            label === "Wishlist" || label === "Cart" ? (
+            label === "Wishlist" || label === "Cart" || label === "Account" ? (
               <Link
                 key={label}
-                href={label === "Wishlist" ? "/wishlist" : "/Cart"}
+                href={label === "Wishlist" ? "/wishlist" : label === "Cart" ? "/Cart" : "/account"}
                 className="hidden h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white transition hover:border-[#d5aa42] hover:text-[#f4c95d] sm:inline-flex"
                 aria-label={label}
                 title={label}
@@ -282,6 +282,13 @@ export function StorefrontHeader({
                 className="rounded-md border border-white/8 px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-[#d5aa42] hover:text-[#f4c95d]"
               >
                 Cart
+              </Link>
+              <Link
+                href="/account"
+                onClick={() => setOpen(false)}
+                className="rounded-md border border-white/8 px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-[#d5aa42] hover:text-[#f4c95d]"
+              >
+                Account
               </Link>
             </div>
 

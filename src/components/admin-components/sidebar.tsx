@@ -11,6 +11,7 @@ const navItems = [
   { label: "Category Management", href: "/admin/categories" },
   { label: "Manage Hero", href: "/admin/hero" },
   { label: "Manage Gallery", href: "/admin/gallery" },
+  { label: "Profile & Security", href: "/admin/profile" },
 ];
 
 export default function Sidebar() {
@@ -27,7 +28,7 @@ export default function Sidebar() {
       <nav className="flex flex-col gap-1">
         {navItems.map((item) => {
           const isActive =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
+            pathname === item.href || (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
 
           return (
             <Link
@@ -45,8 +46,8 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <div className="mt-auto rounded-xl border border-dashed border-zinc-200 p-4 text-xs text-zinc-500">
-        Add inventory, orders, and analytics when you are ready to scale.
+      <div className="mt-auto rounded-xl border border-zinc-200 p-4 text-xs text-zinc-500">
+        Manage your storefront from one place.
       </div>
     </aside>
   );
