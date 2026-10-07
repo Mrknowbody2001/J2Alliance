@@ -310,26 +310,41 @@ function CompactProductRow({
         <Link
           key={product.id}
           href={`/products/${product.id}`}
-          className={`group flex min-h-28 min-w-[13.5rem] flex-col justify-between rounded-md border p-4 transition hover:-translate-y-0.5 sm:min-w-[calc((100%-3rem)/4)] ${
+          className={`group w-[42vw] shrink-0 overflow-hidden rounded-md border transition hover:-translate-y-0.5 sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-5rem)/6)] ${
             dark
               ? "border-white/12 bg-white/[0.04] text-white hover:border-[#d5aa42] hover:bg-white/[0.07]"
               : "border-[#e7e2d8] bg-white text-[#111] shadow-[0_14px_34px_rgba(0,0,0,0.05)] hover:border-[#d5aa42] hover:shadow-[0_20px_42px_rgba(0,0,0,0.1)]"
           }`}
         >
-          <h3
-            className={`line-clamp-2 text-sm font-semibold leading-6 ${
-              dark ? "text-white" : "text-[#111]"
-            }`}
-          >
-            {product.title}
-          </h3>
-          <p
-            className={`mt-4 text-sm font-bold ${
-              dark ? "text-[#f4c95d]" : "text-[#9d7415]"
-            }`}
-          >
-            {formatPrice(product.price)}
-          </p>
+          <div className={`aspect-square overflow-hidden ${dark ? "bg-white/5" : "bg-[#f5f2eb]"}`}>
+            {product.image ? (
+              <img
+                src={product.image}
+                alt={product.title}
+                className="h-full w-full object-contain p-2 transition duration-500 group-hover:scale-[1.035]"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-xs font-semibold uppercase tracking-[0.2em] text-[#8d8d8d]">
+                Product Image
+              </div>
+            )}
+          </div>
+          <div className="flex min-h-24 flex-col justify-between p-4">
+            <h3
+              className={`line-clamp-2 text-sm font-semibold leading-6 ${
+                dark ? "text-white" : "text-[#111]"
+              }`}
+            >
+              {product.title}
+            </h3>
+            <p
+              className={`mt-4 text-sm font-bold ${
+                dark ? "text-[#f4c95d]" : "text-[#9d7415]"
+              }`}
+            >
+              {formatPrice(product.price)}
+            </p>
+          </div>
         </Link>
       ))}
     </div>
