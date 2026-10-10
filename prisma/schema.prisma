@@ -51,6 +51,7 @@ model Order {
   customerPhone      String
   customerAddress    String
   customerCity       String
+  customerCountry    String   @default("Sri Lanka")
   customerPostalCode String?
 
   subtotal    Float

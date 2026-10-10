@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     if (!customerInfo || !Array.isArray(rawItems) || rawItems.length === 0 || rawItems.length > 50) {
       return NextResponse.json({ success: false, message: "Customer information and at least one item are required." }, { status: 400 });
     }
-    const required = ["firstName", "lastName", "email", "phone", "address", "city"];
+    const required = ["firstName", "lastName", "email", "phone", "address", "city", "country"];
     if (required.some((key) => typeof customerInfo[key] !== "string" || !customerInfo[key].trim())) {
       return NextResponse.json({ success: false, message: "Complete all required delivery details." }, { status: 400 });
     }
@@ -42,6 +42,7 @@ export async function POST(request: Request) {
         customerFirstName: customerInfo.firstName.trim(), customerLastName: customerInfo.lastName.trim(),
         customerEmail: customerInfo.email.trim().toLowerCase(), customerPhone: customerInfo.phone.trim(),
         customerAddress: customerInfo.address.trim(), customerCity: customerInfo.city.trim(),
+        customerCountry: customerInfo.country.trim(),
         customerPostalCode: typeof customerInfo.postalCode === "string" ? customerInfo.postalCode.trim() || null : null,
         subtotal, deliveryFee, total: subtotal + deliveryFee,
         paymentMethod: "TEST", paymentStatus: "PENDING", orderStatus: "PENDING",

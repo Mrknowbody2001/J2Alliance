@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   AtSign,
@@ -60,7 +61,24 @@ export function StorefrontHeader({
   const [open, setOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [isCustomerSignedIn, setIsCustomerSignedIn] = useState(false);
   const categoryMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/customer/profile", { cache: "no-store" })
+      .then((response) => { if (active) setIsCustomerSignedIn(response.ok); })
+      .catch(() => { if (active) setIsCustomerSignedIn(false); });
+    return () => { active = false; };
+  }, [pathname]);
+
+  async function signOut() {
+    await fetch("/api/customer/logout", { method: "POST" });
+    setIsCustomerSignedIn(false);
+    router.refresh();
+  }
 
   useEffect(() => {
     function closeCategoryMenu(event: MouseEvent) {
@@ -91,12 +109,19 @@ export function StorefrontHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080808] text-white shadow-[0_12px_30px_rgba(0,0,0,0.16)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
-        <Link href="/" className="flex min-w-fit flex-col leading-none">
-          <span className="font-heading text-3xl font-semibold tracking-[0.08em]">
-            J2Alliance
-          </span>
-          <span className="mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[#d5aa42]">
-            Online Store
+        <Link href="/" className="flex min-w-fit items-center gap-3 leading-none">
+          <img
+            src="/logo.png"
+            alt="J2 Alliance logo"
+            className="h-12 w-12 rounded-full object-cover sm:h-14 sm:w-14"
+          />
+          <span className="flex flex-col">
+            <span className="font-heading text-2xl font-semibold tracking-[0.08em] sm:text-3xl">
+              J2Alliance
+            </span>
+            <span className="mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[#d5aa42]">
+              Online Store
+            </span>
           </span>
         </Link>
 
@@ -208,7 +233,7 @@ export function StorefrontHeader({
             label === "Wishlist" || label === "Cart" || label === "Account" ? (
               <Link
                 key={label}
-                href={label === "Wishlist" ? "/wishlist" : label === "Cart" ? "/Cart" : "/account"}
+                href={label === "Wishlist" ? "/wishlist" : label === "Cart" ? "/Cart" : isCustomerSignedIn ? "/account" : "/sign-in"}
                 className="hidden h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-white transition hover:border-[#d5aa42] hover:text-[#f4c95d] sm:inline-flex"
                 aria-label={label}
                 title={label}
@@ -237,6 +262,19 @@ export function StorefrontHeader({
           </button>
         </div>
       </div>
+
+      {isCustomerSignedIn && (
+        <nav aria-label="Customer navigation" className="border-t border-white/8 bg-[#101010]">
+          <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-2 sm:px-6 lg:px-10">
+            <span className="mr-2 shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#d5aa42]">Your account</span>
+            <Link href="/account" className="shrink-0 rounded px-3 py-2 text-xs font-semibold text-white/70 transition hover:bg-white/5 hover:text-[#f4c95d]">Dashboard</Link>
+            <Link href="/account#orders" className="shrink-0 rounded px-3 py-2 text-xs font-semibold text-white/70 transition hover:bg-white/5 hover:text-[#f4c95d]">My orders</Link>
+            <Link href="/account#addresses" className="shrink-0 rounded px-3 py-2 text-xs font-semibold text-white/70 transition hover:bg-white/5 hover:text-[#f4c95d]">Addresses</Link>
+            <Link href="/wishlist" className="shrink-0 rounded px-3 py-2 text-xs font-semibold text-white/70 transition hover:bg-white/5 hover:text-[#f4c95d]">Wishlist</Link>
+            <button onClick={signOut} className="ml-auto shrink-0 px-3 py-2 text-xs font-semibold text-white/50 transition hover:text-white">Sign out</button>
+          </div>
+        </nav>
+      )}
 
       {open && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden">
@@ -284,11 +322,11 @@ export function StorefrontHeader({
                 Cart
               </Link>
               <Link
-                href="/account"
+                href={isCustomerSignedIn ? "/account" : "/sign-in"}
                 onClick={() => setOpen(false)}
                 className="rounded-md border border-white/8 px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-[#d5aa42] hover:text-[#f4c95d]"
               >
-                Account
+                {isCustomerSignedIn ? "My Account" : "Sign in"}
               </Link>
             </div>
 
@@ -369,17 +407,18 @@ export function SectionHeading({
   );
 }
 
-export function ProductCard({ product }: { product: ShellProduct }) {
+export function ProductCard({ product, variant = "light" }: { product: ShellProduct; variant?: "light" | "dark" }) {
+  const isDark = variant === "dark";
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
   const isInWishlist = useWishlistStore((state) =>
     state.isInWishlist(product.id),
   );
 
   return (
-    <article className="group overflow-hidden rounded-md border border-[#e7e2d8] bg-white shadow-[0_18px_42px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:border-[#d5aa42] hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)]">
+    <article className={`group overflow-hidden rounded-md border shadow-[0_18px_42px_rgba(0,0,0,0.16)] transition duration-300 hover:-translate-y-1 hover:border-[#d5aa42] hover:shadow-[0_24px_54px_rgba(0,0,0,0.3)] ${isDark ? "border-white/10 bg-[#1b1b1b]" : "border-[#e7e2d8] bg-white shadow-[0_18px_42px_rgba(0,0,0,0.06)] hover:shadow-[0_24px_54px_rgba(0,0,0,0.12)]"}`}>
       <Link
         href={`/products/${product.id}`}
-        className="block overflow-hidden bg-[#f5f2eb]"
+        className={`block overflow-hidden ${isDark ? "bg-[#242424]" : "bg-[#f5f2eb]"}`}
       >
         {product.image ? (
           <img
@@ -396,11 +435,11 @@ export function ProductCard({ product }: { product: ShellProduct }) {
       <div className="space-y-3 p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="min-h-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#b58518]">
+            <p className="min-h-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#d5aa42]">
               {product.subCategoryName ?? product.categoryName ?? "Collection"}
             </p>
             <Link href={`/products/${product.id}`}>
-              <h3 className="mt-2 line-clamp-2 text-base font-semibold text-[#111] transition hover:text-[#9d7415]">
+              <h3 className={`mt-2 line-clamp-2 text-base font-semibold transition ${isDark ? "text-white hover:text-[#f4c95d]" : "text-[#111] hover:text-[#9d7415]"}`}>
                 {product.title}
               </h3>
             </Link>
@@ -415,7 +454,7 @@ export function ProductCard({ product }: { product: ShellProduct }) {
                 image: product.image ?? "",
               })
             }
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e6dfd0] text-[#111] transition hover:border-[#d5aa42] hover:bg-[#fff8e3]"
+            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition hover:border-[#d5aa42] ${isDark ? "border-white/15 text-white hover:bg-white/8" : "border-[#e6dfd0] text-[#111] hover:bg-[#fff8e3]"}`}
             aria-label={
               isInWishlist ? "Remove from wishlist" : "Add to wishlist"
             }
@@ -427,8 +466,8 @@ export function ProductCard({ product }: { product: ShellProduct }) {
             />
           </button>
         </div>
-        <div className="flex items-center justify-between gap-3 border-t border-[#eee9df] pt-3">
-          <p className="text-sm font-bold text-[#111]">
+        <div className={`flex items-center justify-between gap-3 border-t pt-3 ${isDark ? "border-white/10" : "border-[#eee9df]"}`}>
+          <p className={`text-sm font-bold ${isDark ? "text-[#f4c95d]" : "text-[#111]"}`}>
             {formatPrice(product.price)}
           </p>
           <Link

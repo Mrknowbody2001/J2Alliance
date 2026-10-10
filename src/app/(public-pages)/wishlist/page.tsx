@@ -16,17 +16,18 @@ export default function WishlistPage() {
 
   if (items.length === 0) {
     return (
-      <main className="min-h-screen px-6 py-16">
-        <div className="mx-auto max-w-5xl text-center">
-          <h1 className="text-3xl font-semibold">My Wishlist</h1>
+      <main className="min-h-screen bg-[#111] px-6 py-16 text-white">
+        <div className="mx-auto max-w-5xl border border-white/10 bg-[#1b1b1b] px-6 py-16 text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d5aa42]">Saved pieces</p>
+          <h1 className="font-heading mt-3 text-4xl font-semibold">My Wishlist</h1>
 
-          <p className="mt-4 text-gray-500">
+          <p className="mt-4 text-white/55">
             You haven&apos;t added any products to your wishlist yet.
           </p>
 
           <Link
             href="/shop"
-            className="mt-8 inline-block rounded-md bg-black px-6 py-3 text-white"
+            className="mt-8 inline-block rounded-md bg-[#d5aa42] px-6 py-3 font-semibold text-[#111] transition hover:bg-[#f4c95d]"
           >
             Continue Shopping
           </Link>
@@ -36,21 +37,22 @@ export default function WishlistPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-12">
+    <main className="min-h-screen bg-[#111] px-6 py-12 text-white">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-10 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-semibold">My Wishlist</h1>
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d5aa42]">Saved pieces</p>
+            <h1 className="font-heading mt-2 text-4xl font-semibold">My Wishlist</h1>
 
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2 text-white/50">
               {items.length} {items.length === 1 ? "product" : "products"}
             </p>
           </div>
 
           <button
             onClick={clearWishlist}
-            className="text-sm text-red-500 hover:underline"
+            className="text-sm text-red-400 hover:text-red-300 hover:underline"
           >
             Clear Wishlist
           </button>
@@ -61,10 +63,10 @@ export default function WishlistPage() {
           {items.map((item) => (
             <div
               key={item.productId}
-              className="overflow-hidden rounded-lg border bg-white"
+              className="overflow-hidden rounded-lg border border-white/10 bg-[#1b1b1b]"
             >
               {/* Product Image */}
-              <div className="relative aspect-[3/4] bg-gray-100">
+              <div className="relative aspect-[3/4] bg-[#242424]">
                 {item.image ? (
                   <Image
                     src={item.image}
@@ -73,7 +75,7 @@ export default function WishlistPage() {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  <div className="flex h-full items-center justify-center text-xs font-semibold uppercase tracking-wider text-white/40">
                     Product image
                   </div>
                 )}
@@ -83,7 +85,7 @@ export default function WishlistPage() {
               <div className="p-4">
                 <h2 className="font-medium">{item.productName}</h2>
 
-                <p className="mt-2 font-semibold">
+                <p className="mt-2 font-semibold text-[#f4c95d]">
                   LKR {item.price.toLocaleString()}
                 </p>
 
@@ -99,7 +101,7 @@ export default function WishlistPage() {
                         quantity: 1,
                       })
                     }
-                    className="inline-flex min-h-10 items-center justify-center gap-2 bg-black px-3 text-sm text-white hover:bg-gray-800"
+                    className="inline-flex min-h-10 items-center justify-center gap-2 bg-[#d5aa42] px-3 text-sm font-semibold text-[#111] transition hover:bg-[#f4c95d]"
                   >
                     <ShoppingBag className="h-4 w-4" />
                     Add to cart
@@ -107,7 +109,7 @@ export default function WishlistPage() {
                   <button
                     type="button"
                     onClick={() => removeFromWishlist(item.productId)}
-                    className="inline-flex min-h-10 items-center justify-center gap-2 border border-red-500 px-3 text-sm text-red-500 hover:bg-red-50"
+                    className="inline-flex min-h-10 items-center justify-center gap-2 border border-red-400/50 px-3 text-sm text-red-300 transition hover:bg-red-400/10"
                   >
                     <Trash2 className="h-4 w-4" />
                     Remove

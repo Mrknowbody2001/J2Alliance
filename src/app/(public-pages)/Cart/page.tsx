@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-import { SectionHeading } from "@/components/storefront/storefront-shell";
 import { useCartStore } from "@/stores/cart.store";
 
 export default function CartPage() {
@@ -23,19 +22,19 @@ export default function CartPage() {
   const formatPrice = (price: number) => `LKR ${price.toLocaleString("en-LK")}`;
 
   return (
-    <main className="min-h-screen bg-white text-[#111]">
+    <main className="min-h-screen bg-[#111] text-white">
       {/* Header */}
       <section className="bg-[#111] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-9 lg:px-10">
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">
             Shopping Bag
           </p>
 
-          <h1 className="font-heading mt-3 text-5xl font-semibold leading-[0.95] sm:text-7xl">
+          <h1 className="font-heading mt-2 text-4xl font-semibold leading-[0.98] sm:text-5xl">
             Your Cart
           </h1>
 
-          <p className="mt-6 max-w-2xl text-sm leading-7 text-white/62 sm:text-base">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/62 sm:text-base">
             Review your selected products before continuing to checkout.
           </p>
         </div>
@@ -48,16 +47,16 @@ export default function CartPage() {
         ) : (
           <>
             <div className="mb-8 flex items-end justify-between gap-4">
-              <SectionHeading
-                eyebrow={`${itemCount} ${itemCount === 1 ? "Item" : "Items"}`}
-                title="Your Selection"
-                copy="Adjust quantities or remove products before checkout."
-              />
+              <div>
+                <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">{itemCount} {itemCount === 1 ? "Item" : "Items"}</p>
+                <h2 className="font-heading mt-3 text-4xl font-semibold leading-[0.98] text-white sm:text-5xl">Your Selection</h2>
+                <p className="mt-4 text-sm leading-7 text-white/55 sm:text-base">Adjust quantities or remove products before checkout.</p>
+              </div>
 
               <button
                 type="button"
                 onClick={clearCart}
-                className="hidden text-xs font-bold uppercase tracking-[0.16em] text-red-600 transition hover:text-red-800 sm:block"
+                className="hidden text-xs font-bold uppercase tracking-[0.16em] text-red-400 transition hover:text-red-300 sm:block"
               >
                 Clear Cart
               </button>
@@ -69,11 +68,11 @@ export default function CartPage() {
                 {items.map((item) => (
                   <article
                     key={item.productId}
-                    className="border border-[#e7e2d8] bg-white p-4 sm:p-5"
+                    className="border border-white/10 bg-[#1b1b1b] p-4 sm:p-5"
                   >
                     <div className="flex gap-4 sm:gap-6">
                       {/* Product Image */}
-                      <div className="relative h-28 w-24 shrink-0 overflow-hidden bg-[#f7f4ed] sm:h-36 sm:w-28">
+                      <div className="relative h-28 w-24 shrink-0 overflow-hidden bg-[#242424] sm:h-36 sm:w-28">
                         {item.image ? (
                           <Image
                             src={item.image}
@@ -83,7 +82,7 @@ export default function CartPage() {
                             className="object-cover"
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold uppercase text-[#777]">
+                          <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold uppercase text-white/40">
                             Product image
                           </div>
                         )}
@@ -92,35 +91,35 @@ export default function CartPage() {
                       {/* Product Info */}
                       <div className="flex min-w-0 flex-1 flex-col justify-between">
                         <div>
-                          <h2 className="truncate text-base font-bold text-[#111] sm:text-lg">
+                          <h2 className="truncate text-base font-bold text-white sm:text-lg">
                             {item.productName}
                           </h2>
 
-                          <p className="mt-2 text-sm text-[#777]">
+                          <p className="mt-2 text-sm text-[#f4c95d]">
                             {formatPrice(item.price)}
                           </p>
                         </div>
 
                         <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
                           {/* Quantity */}
-                          <div className="inline-flex h-10 items-center border border-[#ded7ca]">
+                          <div className="inline-flex h-10 items-center border border-white/15">
                             <button
                               type="button"
                               onClick={() => decreaseQuantity(item.productId)}
-                              className="flex h-full w-10 items-center justify-center transition hover:bg-[#f8f5ee]"
+                              className="flex h-full w-10 items-center justify-center text-white/70 transition hover:bg-white/8 hover:text-white"
                               aria-label="Decrease quantity"
                             >
                               <Minus className="h-4 w-4" />
                             </button>
 
-                            <span className="flex h-full min-w-10 items-center justify-center border-x border-[#ded7ca] text-sm font-semibold">
+                            <span className="flex h-full min-w-10 items-center justify-center border-x border-white/15 text-sm font-semibold">
                               {item.quantity}
                             </span>
 
                             <button
                               type="button"
                               onClick={() => increaseQuantity(item.productId)}
-                              className="flex h-full w-10 items-center justify-center transition hover:bg-[#f8f5ee]"
+                              className="flex h-full w-10 items-center justify-center text-white/70 transition hover:bg-white/8 hover:text-white"
                               aria-label="Increase quantity"
                             >
                               <Plus className="h-4 w-4" />
@@ -131,7 +130,7 @@ export default function CartPage() {
                           <button
                             type="button"
                             onClick={() => removeFromCart(item.productId)}
-                            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-red-600 transition hover:text-red-800"
+                            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-red-400 transition hover:text-red-300"
                           >
                             <Trash2 className="h-4 w-4" />
                             Remove
@@ -141,19 +140,19 @@ export default function CartPage() {
 
                       {/* Item Total */}
                       <div className="hidden text-right sm:block">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#999]">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/40">
                           Total
                         </p>
 
-                        <p className="mt-2 font-bold text-[#111]">
+                        <p className="mt-2 font-bold text-white">
                           {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
                     </div>
 
                     {/* Mobile total */}
-                    <div className="mt-4 flex items-center justify-between border-t border-[#eee8dd] pt-4 sm:hidden">
-                      <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#999]">
+                    <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4 sm:hidden">
+                      <span className="text-xs font-bold uppercase tracking-[0.14em] text-white/40">
                         Item Total
                       </span>
 
@@ -167,15 +166,15 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={clearCart}
-                  className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-red-600 sm:hidden"
+                  className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-red-400 sm:hidden"
                 >
                   Clear Cart
                 </button>
               </div>
 
               {/* Summary */}
-              <aside className="h-fit border border-[#e7e2d8] bg-[#faf8f2] p-6 sm:p-7">
-                <p className="text-[0.7rem] font-bold uppercase tracking-[0.25em] text-[#9d7415]">
+              <aside className="h-fit border border-white/10 bg-[#1b1b1b] p-6 sm:p-7">
+                <p className="text-[0.7rem] font-bold uppercase tracking-[0.25em] text-[#d5aa42]">
                   Order Summary
                 </p>
 
@@ -183,7 +182,7 @@ export default function CartPage() {
 
                 <div className="mt-7 space-y-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#666]">Subtotal</span>
+                    <span className="text-white/55">Subtotal</span>
 
                     <span className="font-semibold">
                       {formatPrice(subtotal)}
@@ -193,10 +192,10 @@ export default function CartPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-[#666]">Delivery</span>
 
-                    <span className="text-[#777]">Calculated at checkout</span>
+                    <span className="text-white/40">Calculated at checkout</span>
                   </div>
 
-                  <div className="border-t border-[#ded7ca] pt-5">
+                  <div className="border-t border-white/10 pt-5">
                     <div className="flex justify-between">
                       <span className="font-bold">Total</span>
 
@@ -217,7 +216,7 @@ export default function CartPage() {
 
                 <Link
                   href="/shop"
-                  className="mt-4 block text-center text-xs font-bold uppercase tracking-[0.15em] text-[#555] hover:text-[#111]"
+                  className="mt-4 block text-center text-xs font-bold uppercase tracking-[0.15em] text-white/50 hover:text-white"
                 >
                   Continue Shopping
                 </Link>
@@ -232,18 +231,18 @@ export default function CartPage() {
 
 function EmptyCart() {
   return (
-    <div className="border border-[#e7e2d8] bg-[#faf8f2] px-6 py-16 text-center sm:py-20">
+    <div className="border border-white/10 bg-[#1b1b1b] px-6 py-16 text-center sm:py-20">
       <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#111] text-[#f4c95d]">
         <ShoppingBag className="h-7 w-7" />
       </span>
 
-      <p className="mt-7 text-[0.72rem] font-bold uppercase tracking-[0.25em] text-[#9d7415]">
+      <p className="mt-7 text-[0.72rem] font-bold uppercase tracking-[0.25em] text-[#d5aa42]">
         Your Cart
       </p>
 
       <h2 className="mt-3 text-3xl font-bold">Your cart is empty.</h2>
 
-      <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-[#666]">
+      <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-white/55">
         Discover our collection and add something special to your shopping bag.
       </p>
 

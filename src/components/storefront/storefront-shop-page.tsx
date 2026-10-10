@@ -4,9 +4,7 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import {
   ProductCard,
-  SectionHeading,
   StorefrontFooter,
-  StorefrontHeader,
   type ShellProduct,
 } from "@/components/storefront/storefront-shell";
 
@@ -61,34 +59,32 @@ export default function StorefrontShopPage({
   const navCategories = categories;
 
   return (
-    <main className="min-h-screen bg-white text-[#111]">
-      <StorefrontHeader categories={navCategories} />
-
+    <main className="min-h-screen bg-[#111] text-white">
       <section className="bg-[#111] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-9 lg:px-10">
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">
             Shop
           </p>
-          <h1 className="font-heading mt-3 text-5xl font-semibold leading-[0.95] text-white sm:text-7xl">
+          <h1 className="font-heading mt-2 text-4xl font-semibold leading-[0.98] text-white sm:text-5xl">
             Explore the Collection
           </h1>
-          <p className="mt-5 max-w-2xl text-sm leading-7 text-white/62">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/62">
             Search and filter live products from the existing J2Alliance
             catalog.
           </p>
         </div>
       </section>
 
-      <section className="border-b border-[#eee7da] bg-[#faf8f2]">
+      <section className="border-y border-white/10 bg-[#171717]">
         <div className="mx-auto grid max-w-7xl gap-4 px-4 py-5 sm:px-6 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:px-10">
           <label className="relative block">
             <span className="sr-only">Search products</span>
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#777]" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search products"
-              className="h-12 w-full rounded-md border border-[#e2d8c7] bg-white pl-11 pr-4 text-sm outline-none transition focus:border-[#d5aa42]"
+              className="h-12 w-full rounded-md border border-white/10 bg-[#1b1b1b] pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-[#d5aa42]"
             />
           </label>
 
@@ -98,7 +94,7 @@ export default function StorefrontShopPage({
               setCategoryId(event.target.value);
               setSubCategoryId("");
             }}
-            className="h-12 rounded-md border border-[#e2d8c7] bg-white px-4 text-sm outline-none transition focus:border-[#d5aa42]"
+            className="h-12 rounded-md border border-white/10 bg-[#1b1b1b] px-4 text-sm text-white outline-none transition focus:border-[#d5aa42]"
           >
             <option value="">All categories</option>
             {categories.map((category) => (
@@ -112,7 +108,7 @@ export default function StorefrontShopPage({
             value={subCategoryId}
             onChange={(event) => setSubCategoryId(event.target.value)}
             disabled={!activeCategory}
-            className="h-12 rounded-md border border-[#e2d8c7] bg-white px-4 text-sm outline-none transition focus:border-[#d5aa42] disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 rounded-md border border-white/10 bg-[#1b1b1b] px-4 text-sm text-white outline-none transition focus:border-[#d5aa42] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <option value="">All subcategories</option>
             {activeCategory?.subcategories.map((subcategory) => (
@@ -126,11 +122,13 @@ export default function StorefrontShopPage({
 
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeading
-            eyebrow="Products"
-            title={`${filteredProducts.length} item${filteredProducts.length === 1 ? "" : "s"} found`}
-          />
-          <p className="text-sm text-[#686868]">
+          <div>
+            <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">Products</p>
+            <h2 className="font-heading mt-3 text-4xl font-semibold leading-[0.98] text-white sm:text-5xl">
+              {filteredProducts.length} item{filteredProducts.length === 1 ? "" : "s"} found
+            </h2>
+          </div>
+          <p className="text-sm text-white/45">
             Sorted by latest catalog update.
           </p>
         </div>
@@ -138,11 +136,11 @@ export default function StorefrontShopPage({
         {filteredProducts.length > 0 ? (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} variant="dark" />
             ))}
           </div>
         ) : (
-          <div className="rounded-md border border-dashed border-[#d8ceb9] bg-[#faf8f2] p-8 text-sm leading-7 text-[#686868]">
+          <div className="rounded-md border border-dashed border-white/15 bg-[#1b1b1b] p-8 text-sm leading-7 text-white/55">
             No products match this filter yet.
           </div>
         )}

@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   SectionHeading,
   StorefrontFooter,
-  StorefrontHeader,
   formatPrice,
   type ShellProduct,
 } from "@/components/storefront/storefront-shell";
@@ -106,8 +105,6 @@ export default function StorefrontHome({
 
   return (
     <main className="min-h-screen bg-white text-[#111]">
-      <StorefrontHeader categories={navCategories} />
-
       <section className="relative bg-[#080808] text-white">
         <div className="relative h-[calc(100vh-73px)] min-h-[34rem] overflow-hidden lg:min-h-[42rem]">
           {visibleHeroSlides.map((slide, index) => (

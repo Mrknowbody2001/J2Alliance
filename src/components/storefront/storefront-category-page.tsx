@@ -5,7 +5,6 @@ import {
   ProductCard,
   SectionHeading,
   StorefrontFooter,
-  StorefrontHeader,
   type ShellCategory,
   type ShellProduct,
 } from "@/components/storefront/storefront-shell";
@@ -35,8 +34,6 @@ export default function StorefrontCategoryPage({
 }: StorefrontCategoryPageProps) {
   return (
     <main className="min-h-screen bg-white text-[#111]">
-      <StorefrontHeader categories={categories} />
-
       <section className="bg-[#111] text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
           <Link

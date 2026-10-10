@@ -27,6 +27,7 @@ export default function CheckoutPage() {
     phone: "",
     address: "",
     city: "",
+    country: "",
     postalCode: "",
     paymentMethod: "TEST",
   });
@@ -75,6 +76,7 @@ export default function CheckoutPage() {
           phone: form.phone,
           address: form.address,
           city: form.city,
+          country: form.country,
           postalCode: form.postalCode,
         },
 
@@ -178,6 +180,8 @@ export default function CheckoutPage() {
 
           <p className="mt-6 max-w-2xl text-sm leading-7 text-white/62 sm:text-base">
             Enter your delivery details and review your order before placing it.
+            You can check out without an account. Sign in before placing the
+            order to have it saved to your order history and customer dashboard.
           </p>
         </div>
       </section>
@@ -253,6 +257,13 @@ export default function CheckoutPage() {
                     required
                     value={form.city}
                     onChange={(value) => updateField("city", value)}
+                  />
+
+                  <Field
+                    label="Country"
+                    required
+                    value={form.country}
+                    onChange={(value) => updateField("country", value)}
                   />
 
                   <Field

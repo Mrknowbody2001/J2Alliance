@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { Banknote, Globe2, MapPin, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import RichTextContent from "@/components/ui/rich-text-content";
 import ProductPurchaseControls from "@/components/storefront/product-purchase-controls";
-import { StorefrontFooter, StorefrontHeader } from "@/components/storefront/storefront-shell";
+import { StorefrontFooter } from "@/components/storefront/storefront-shell";
 import { listCategoriesWithSubCategories } from "@/services/category.service";
 import { getProductById } from "@/services/product.service";
 
@@ -61,8 +61,6 @@ export default async function ProductDetailsPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-[#111] text-white">
-      <StorefrontHeader categories={navCategories} />
-
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/55">
           <Link href={`/categories/${product.categoryId}`} className="text-[#1689a8] hover:underline">{product.category.name}</Link>

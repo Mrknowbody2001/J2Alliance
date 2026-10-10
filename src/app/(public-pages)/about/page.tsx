@@ -3,7 +3,6 @@ import { Award, Gem, Handshake, ShieldCheck } from "lucide-react";
 import {
   SectionHeading,
   StorefrontFooter,
-  StorefrontHeader,
 } from "@/components/storefront/storefront-shell";
 import { listCategoriesWithSubCategories } from "@/services/category.service";
 
@@ -44,8 +43,6 @@ export default async function AboutPage() {
 
   return (
     <main className="min-h-screen bg-white text-[#111]">
-      <StorefrontHeader categories={navCategories} />
-
       <section className="bg-[#111] text-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">
