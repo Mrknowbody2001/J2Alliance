@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/admin-auth";
+import type { SubCategory } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryById } from "@/services/category.service";
@@ -63,7 +64,7 @@ export default async function CategoryDetailPage({
             </p>
           ) : (
             <ul className="space-y-2 text-sm text-zinc-700">
-              {category.subcategories.map((subcategory) => (
+              {category.subcategories.map((subcategory: Pick<SubCategory, "id" | "name">) => (
                 <li
                   key={subcategory.id}
                   className="rounded-lg border border-zinc-200 px-3 py-2"
