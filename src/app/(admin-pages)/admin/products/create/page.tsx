@@ -1,7 +1,9 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import ProductForm from "@/components/admin-components/product-form";
 import { listCategoriesWithSubCategories } from "@/services/category.service";
 
 export default async function CreateProductPage() {
+  await requireAdmin();
   const categories = await listCategoriesWithSubCategories();
 
   return (

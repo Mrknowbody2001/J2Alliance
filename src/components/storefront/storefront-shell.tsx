@@ -31,6 +31,7 @@ export type ShellProduct = {
   id: string;
   title: string;
   price: number;
+  discountedPrice?: number | null;
   image: string | null;
   categoryName?: string;
   subCategoryName?: string;
@@ -108,15 +109,15 @@ export function StorefrontHeader({
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080808] text-white shadow-[0_12px_30px_rgba(0,0,0,0.16)]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-10">
         <Link href="/" className="flex min-w-fit items-center gap-3 leading-none">
           <img
             src="/logo.png"
             alt="J2 Alliance logo"
-            className="h-12 w-12 rounded-full object-cover sm:h-14 sm:w-14"
+            className="h-10 w-10 rounded-full object-cover sm:h-11 sm:w-11"
           />
           <span className="flex flex-col">
-            <span className="font-heading text-2xl font-semibold tracking-[0.08em] sm:text-3xl">
+            <span className="font-heading text-xl font-semibold tracking-[0.08em] sm:text-2xl">
               J2Alliance
             </span>
             <span className="mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[#d5aa42]">
@@ -380,11 +381,13 @@ export function SectionHeading({
   title,
   copy,
   align = "left",
+  dark = false,
 }: {
   eyebrow: string;
   title: string;
   copy?: string;
   align?: "left" | "center";
+  dark?: boolean;
 }) {
   return (
     <div
@@ -392,14 +395,14 @@ export function SectionHeading({
         align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"
       }
     >
-      <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#b58518]">
+      <p className={`text-[0.72rem] font-bold uppercase tracking-[0.28em] ${dark ? "text-[#d5aa42]" : "text-[#b58518]"}`}>
         {eyebrow}
       </p>
-      <h2 className="font-heading mt-3 text-4xl font-semibold leading-[0.98] text-[#111] sm:text-5xl">
+      <h2 className={`font-heading mt-3 text-4xl font-semibold leading-[0.98] sm:text-5xl ${dark ? "text-white" : "text-[#111]"}`}>
         {title}
       </h2>
       {copy && (
-        <p className="mt-4 text-sm leading-7 text-[#5d5d5d] sm:text-base">
+        <p className={`mt-4 text-sm leading-7 sm:text-base ${dark ? "text-white/65" : "text-[#5d5d5d]"}`}>
           {copy}
         </p>
       )}
@@ -467,8 +470,8 @@ export function ProductCard({ product, variant = "light" }: { product: ShellProd
           </button>
         </div>
         <div className={`flex items-center justify-between gap-3 border-t pt-3 ${isDark ? "border-white/10" : "border-[#eee9df]"}`}>
-          <p className={`text-sm font-bold ${isDark ? "text-[#f4c95d]" : "text-[#111]"}`}>
-            {formatPrice(product.price)}
+          <p className={`flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm font-bold ${isDark ? "text-[#f4c95d]" : "text-[#111]"}`}>
+            {product.discountedPrice != null && product.discountedPrice < product.price ? <><span>{formatPrice(product.discountedPrice)}</span><span className="text-xs font-medium text-stone-400 line-through">{formatPrice(product.price)}</span></> : formatPrice(product.price)}
           </p>
           <Link
             href={`/products/${product.id}`}

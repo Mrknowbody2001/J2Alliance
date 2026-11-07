@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import { notFound } from "next/navigation";
 import CategoryForm from "@/components/admin-components/category-form";
 import { getCategoryById } from "@/services/category.service";
@@ -9,6 +10,7 @@ type EditCategoryPageProps = {
 };
 
 export default async function EditCategoryPage({ params }: EditCategoryPageProps) {
+  await requireAdmin();
   const { id } = await params;
   const category = await getCategoryById(id);
 

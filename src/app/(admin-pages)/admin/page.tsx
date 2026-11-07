@@ -1,6 +1,8 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  await requireAdmin();
   return (
     <div className="space-y-6">
       <div className="space-y-2">

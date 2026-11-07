@@ -91,10 +91,10 @@ export default async function ProductDetailsPage({ params }: PageProps) {
           <div className="rounded-lg border border-white/10 bg-[#1b1b1b] p-4 sm:p-5">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#d5aa42]">{product.category.name} · {product.subCategory.name}</p>
             <h1 className="mt-3 text-2xl font-semibold leading-tight text-white sm:text-3xl">{product.title}</h1>
-            <p className="mt-4 text-2xl font-bold text-[#f4c95d]">{formatPrice(product.price)}</p>
+            <p className="mt-4 flex flex-wrap items-baseline gap-3 text-2xl font-bold text-[#f4c95d]">{product.discount?.discountedPrice != null && product.discount.discountedPrice < product.price ? <><span>{formatPrice(product.discount.discountedPrice)}</span><span className="text-base font-medium text-white/45 line-through">{formatPrice(product.price)}</span></> : formatPrice(product.price)}</p>
 
             <ProductPurchaseControls
-              product={{ id: product.id, title: product.title, price: product.price, image: primaryImage }}
+              product={{ id: product.id, title: product.title, price: product.discount?.discountedPrice ?? product.price, image: primaryImage }}
             />
 
             <div className="mt-5 border-t border-white/10 pt-5">

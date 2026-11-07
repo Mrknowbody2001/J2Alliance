@@ -70,10 +70,12 @@ const sections = [
 export function CustomerDashboard({
   customer,
   orders,
+  orderCount,
   addresses: initialAddresses,
 }: {
   customer: CustomerProfile;
   orders: CustomerOrder[];
+  orderCount: number;
   addresses: SavedAddress[];
 }) {
   const router = useRouter();
@@ -247,7 +249,7 @@ export function CustomerDashboard({
               <div className="pt-6">
                 <div className="grid gap-3 sm:grid-cols-3">
                   {[
-                    ["Orders", String(orders.length), ClipboardList],
+                    ["Orders", String(orderCount), ClipboardList],
                     ["Wishlist", "Saved items", Heart],
                     [
                       "Profile",
@@ -386,6 +388,11 @@ export function CustomerDashboard({
 
             {active === "orders" && (
               <div className="space-y-4 pt-6">
+                {orderCount > orders.length && (
+                  <p className="text-xs text-white/40">
+                    Showing your 10 most recent orders.
+                  </p>
+                )}
                 {orders.length === 0 ? (
                   <p className="rounded-xl border border-white/8 bg-[#151515] p-6 text-sm text-white/50">
                     No orders yet. Orders placed while signed in will appear

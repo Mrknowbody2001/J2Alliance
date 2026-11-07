@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import { notFound } from "next/navigation";
 import SubCategoryForm from "@/components/admin-components/subcategory-form";
 import { listCategoriesBasic } from "@/services/category.service";
@@ -12,6 +13,7 @@ type EditSubCategoryPageProps = {
 export default async function EditSubCategoryPage({
   params,
 }: EditSubCategoryPageProps) {
+  await requireAdmin();
   const { id } = await params;
   const [subcategory, categories] = await Promise.all([
     getSubCategoryById(id),

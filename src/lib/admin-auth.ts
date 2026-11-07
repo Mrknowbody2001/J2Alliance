@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 const COOKIE_NAME = "admin_session";
+const LOGIN_CHALLENGE_COOKIE = "admin_login_challenge";
 const SESSION_TTL = 60 * 60 * 24 * 7;
-const DEFAULT_USERNAME = "admin";
-const DEFAULT_PASSWORD = "123";
+const LOGIN_CHALLENGE_TTL = 10 * 60;
 
 function secret() {
   const value = process.env.ADMIN_SESSION_SECRET || process.env.DATABASE_URL;
@@ -31,9 +31,20 @@ export function verifyPassword(password: string, stored: string) {
 
 export async function getAdminProfile() {
   const current = await prisma.adminProfile.findUnique({ where: { id: "admin" } });
-  if (current) return current;
+  const username = process.env.ADMIN_USERNAME?.trim();
+  const password = process.env.ADMIN_PASSWORD;
+  if (current) {
+    if (!verifyPassword("123", current.passwordHash)) return current;
+    if (!username || username.length < 3 || !password || password.length < 8) {
+      throw new Error("The legacy default admin password is disabled. Set ADMIN_USERNAME and an ADMIN_PASSWORD of at least 8 characters.");
+    }
+    return prisma.adminProfile.update({ where: { id: "admin" }, data: { username, passwordHash: hashPassword(password) } });
+  }
+  if (!username || username.length < 3 || !password || password.length < 8) {
+    throw new Error("Set ADMIN_USERNAME and an ADMIN_PASSWORD of at least 8 characters to initialize admin login.");
+  }
   return prisma.adminProfile.create({
-    data: { id: "admin", username: DEFAULT_USERNAME, passwordHash: hashPassword(DEFAULT_PASSWORD) },
+    data: { id: "admin", username, passwordHash: hashPassword(password) },
   }).catch(async (error: unknown) => {
     const created = await prisma.adminProfile.findUnique({ where: { id: "admin" } });
     if (created) return created;
@@ -49,6 +60,32 @@ export function createAdminSession() {
   const payload = Buffer.from(JSON.stringify({ sub: "admin", exp: Math.floor(Date.now() / 1000) + SESSION_TTL })).toString("base64url");
   return `${payload}.${sign(payload)}`;
 }
+
+export function createAdminLoginChallenge() {
+  const payload = Buffer.from(JSON.stringify({ sub: "admin-login", exp: Math.floor(Date.now() / 1000) + LOGIN_CHALLENGE_TTL })).toString("base64url");
+  return `${payload}.${sign(payload)}`;
+}
+
+export function isValidAdminLoginChallenge(token?: string) {
+  if (!token) return false;
+  const [payload, signature] = token.split(".");
+  if (!payload || !signature) return false;
+  const expected = Buffer.from(sign(payload));
+  const actual = Buffer.from(signature);
+  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return false;
+  try {
+    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as { sub?: string; exp?: number };
+    return data.sub === "admin-login" && typeof data.exp === "number" && data.exp > Date.now() / 1000;
+  } catch { return false; }
+}
+
+export function getAdminOtpChallengeId(token?: string) {
+  if (!token || !isValidAdminLoginChallenge(token)) return null;
+  return createHmac("sha256", secret()).update(`admin-otp:${token}`).digest("hex");
+}
+
+export const adminLoginChallengeCookie = LOGIN_CHALLENGE_COOKIE;
+export const adminLoginChallengeCookieOptions = { httpOnly: true, sameSite: "strict" as const, secure: process.env.NODE_ENV === "production", path: "/api/admin", maxAge: LOGIN_CHALLENGE_TTL };
 
 export function isValidAdminSession(token?: string) {
   if (!token) return false;

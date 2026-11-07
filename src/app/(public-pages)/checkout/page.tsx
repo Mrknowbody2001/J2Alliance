@@ -8,9 +8,17 @@ import {
   MapPin,
   ShoppingBag,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/stores/cart.store";
+import IntlTelInput, { intlTelInput } from "@intl-tel-input/react";
+import "intl-tel-input/styles";
+
+const countries = intlTelInput.getAllCountries();
+
+function flagEmoji(iso2: string) {
+  return [...iso2.toUpperCase()].map((letter) => String.fromCodePoint(127397 + letter.charCodeAt(0))).join("");
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -19,6 +27,8 @@ export default function CheckoutPage() {
   const clearCart = useCartStore((state) => state.clearCart);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [countryPickerOpen, setCountryPickerOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("lk");
 
   const [form, setForm] = useState({
     firstName: "",
@@ -27,10 +37,15 @@ export default function CheckoutPage() {
     phone: "",
     address: "",
     city: "",
-    country: "",
+    country: "Sri Lanka",
     postalCode: "",
     paymentMethod: "TEST",
   });
+  const filteredCountries = useMemo(() => {
+    const search = form.country.trim().toLowerCase();
+    if (!search) return countries;
+    return countries.filter((country) => country.name.toLowerCase().includes(search));
+  }, [form.country]);
 
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -124,7 +139,7 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <main className="min-h-screen bg-white text-[#111]">
+      <main className="min-h-screen bg-[#090909] text-white">
         <section className="bg-[#111] text-white">
           <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
             <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">
@@ -140,9 +155,9 @@ export default function CheckoutPage() {
         <section className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-10">
           <ShoppingBag className="mx-auto h-12 w-12 text-[#d5aa42]" />
 
-          <h2 className="mt-6 text-3xl font-bold">Nothing to checkout yet.</h2>
+          <h2 className="mt-6 text-3xl font-bold text-white">Nothing to checkout yet.</h2>
 
-          <p className="mt-4 text-sm leading-7 text-[#666]">
+          <p className="mt-4 text-sm leading-7 text-zinc-400">
             Add some products to your cart before continuing to checkout.
           </p>
 
@@ -158,7 +173,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-[#111]">
+    <main className="min-h-screen bg-[#090909] text-white">
       {/* Hero */}
       <section className="bg-[#111] text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
@@ -193,7 +208,7 @@ export default function CheckoutPage() {
             {/* Customer Details */}
             <div className="space-y-8">
               {/* Contact */}
-              <section className="border border-[#e7e2d8] bg-white p-6 sm:p-8">
+              <section className="border border-white/10 bg-[#141414] p-6 sm:p-8 shadow-2xl shadow-black/20">
                 <div className="flex items-center gap-4">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#111] text-[#f4c95d]">
                     <MapPin className="h-5 w-5" />
@@ -204,7 +219,7 @@ export default function CheckoutPage() {
                       Step 01
                     </p>
 
-                    <h2 className="mt-1 text-2xl font-bold">
+                    <h2 className="mt-1 text-2xl font-bold text-white">
                       Delivery Details
                     </h2>
                   </div>
@@ -233,13 +248,20 @@ export default function CheckoutPage() {
                     onChange={(value) => updateField("email", value)}
                   />
 
-                  <Field
-                    label="Phone"
-                    type="tel"
-                    required
-                    value={form.phone}
-                    onChange={(value) => updateField("phone", value)}
-                  />
+                  <label className="block text-sm font-semibold text-zinc-200">
+                    Phone<span className="ml-1 text-[#d5aa42]">*</span>
+                    <IntlTelInput
+                      initialCountry="lk"
+                      countrySearch
+                      countrySelectorMode="AUTO"
+                      separateDialCode
+                      value={form.phone}
+                      onChangeNumber={(value) => updateField("phone", value)}
+                      loadUtils={() => import("intl-tel-input/utils")}
+                      inputProps={{ name: "phone", autoComplete: "tel-national", required: true, "aria-label": "Phone number" }}
+                      classNames={{ container: "checkout-phone mt-2" }}
+                    />
+                  </label>
                 </div>
 
                 <div className="mt-4">
@@ -259,12 +281,32 @@ export default function CheckoutPage() {
                     onChange={(value) => updateField("city", value)}
                   />
 
-                  <Field
-                    label="Country"
-                    required
-                    value={form.country}
-                    onChange={(value) => updateField("country", value)}
-                  />
+                  <div className="relative">
+                    <label className="block text-sm font-semibold text-zinc-200">
+                      Country<span className="ml-1 text-[#d5aa42]">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      role="combobox"
+                      aria-autocomplete="list"
+                      aria-expanded={countryPickerOpen}
+                      aria-controls="checkout-country-options"
+                      autoComplete="off"
+                      required
+                      value={form.country}
+                      onFocus={() => setCountryPickerOpen(true)}
+                      onBlur={() => window.setTimeout(() => setCountryPickerOpen(false), 120)}
+                      onChange={(event) => { updateField("country", event.target.value); setCountryPickerOpen(true); }}
+                      placeholder="Type a country name"
+                      className="mt-2 h-12 w-full rounded-md border border-zinc-700 bg-[#101010] px-4 text-sm text-white outline-none transition placeholder:text-zinc-500 focus:border-[#d5aa42]"
+                    />
+                    {countryPickerOpen && <div id="checkout-country-options" role="listbox" aria-label="Country suggestions" className="absolute z-30 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-zinc-700 bg-[#191919] p-1 shadow-2xl">
+                      {filteredCountries.map((country) => <button type="button" role="option" aria-selected={selectedCountry === country.iso2} key={country.iso2} onMouseDown={(event) => event.preventDefault()} onClick={() => { setSelectedCountry(country.iso2); updateField("country", country.name); setCountryPickerOpen(false); }} className="flex w-full items-center gap-3 rounded px-3 py-2 text-left text-sm text-zinc-200 hover:bg-white/10 aria-selected:bg-white/10">
+                        <span aria-hidden="true">{flagEmoji(country.iso2)}</span><span>{country.name}</span>
+                      </button>)}
+                      {filteredCountries.length === 0 && <p className="px-3 py-4 text-sm text-zinc-500">No countries found.</p>}
+                    </div>}
+                  </div>
 
                   <Field
                     label="Postal Code"
@@ -275,7 +317,7 @@ export default function CheckoutPage() {
               </section>
 
               {/* Payment */}
-              <section className="border border-[#e7e2d8] bg-white p-6 sm:p-8">
+              <section className="border border-white/10 bg-[#141414] p-6 sm:p-8 shadow-2xl shadow-black/20">
                 <div className="flex items-center gap-4">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#111] text-[#f4c95d]">
                     <CreditCard className="h-5 w-5" />
@@ -286,19 +328,19 @@ export default function CheckoutPage() {
                       Step 02
                     </p>
 
-                    <h2 className="mt-1 text-2xl font-bold">Payment</h2>
+                    <h2 className="mt-1 text-2xl font-bold text-white">Payment</h2>
                   </div>
                 </div>
 
                 {/* Test Payment */}
-                <div className="mt-7 border border-[#d5aa42] bg-[#faf8f2] p-5">
+                <div className="mt-7 border border-[#d5aa42]/50 bg-[#1b1914] p-5">
                   <div className="flex items-start gap-4">
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#9d7415]" />
 
                     <div>
-                      <p className="font-bold">Test Payment</p>
+                      <p className="font-bold text-white">Test Payment</p>
 
-                      <p className="mt-2 text-sm leading-6 text-[#666]">
+                      <p className="mt-2 text-sm leading-6 text-zinc-400">
                         Real payment processing is not connected yet. This
                         option is for testing the order flow.
                       </p>
@@ -309,7 +351,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Order Summary */}
-            <aside className="h-fit border border-[#e7e2d8] bg-[#faf8f2] p-6 sm:p-7 lg:sticky lg:top-6">
+            <aside className="h-fit border border-white/10 bg-[#141414] p-6 shadow-2xl shadow-black/20 sm:p-7 lg:sticky lg:top-6">
               <p className="text-[0.7rem] font-bold uppercase tracking-[0.25em] text-[#9d7415]">
                 Your Order
               </p>
@@ -333,7 +375,7 @@ export default function CheckoutPage() {
                         {item.productName}
                       </p>
 
-                      <p className="mt-1 text-xs text-[#777]">
+                      <p className="mt-1 text-xs text-zinc-500">
                         Qty: {item.quantity}
                       </p>
                     </div>
@@ -345,17 +387,17 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="my-6 border-t border-[#ded7ca]" />
+              <div className="my-6 border-t border-white/10" />
 
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-[#666]">Subtotal</span>
+                  <span className="text-zinc-400">Subtotal</span>
 
                   <span className="font-semibold">{formatPrice(subtotal)}</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-[#666]">Delivery</span>
+                  <span className="text-zinc-400">Delivery</span>
 
                   <span>
                     {deliveryFee === 0 ? "Free" : formatPrice(deliveryFee)}
@@ -363,7 +405,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="my-6 border-t border-[#ded7ca]" />
+              <div className="my-6 border-t border-white/10" />
 
               <div className="flex items-center justify-between">
                 <span className="font-bold">Total</span>
@@ -379,7 +421,7 @@ export default function CheckoutPage() {
                 {isSubmitting ? "Processing..." : "Place Test Order"}
               </button>
 
-              <p className="mt-4 text-center text-xs leading-5 text-[#777]">
+              <p className="mt-4 text-center text-xs leading-5 text-zinc-500">
                 This is currently a test order. No real payment will be charged.
               </p>
             </aside>
@@ -404,7 +446,7 @@ function Field({
   required?: boolean;
 }) {
   return (
-    <label className="block text-sm font-semibold text-[#333]">
+    <label className="block text-sm font-semibold text-zinc-200">
       {label}
       {required && <span className="ml-1 text-[#d5aa42]">*</span>}
 
@@ -413,7 +455,7 @@ function Field({
         required={required}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 h-12 w-full rounded-md border border-[#e2d8c7] bg-white px-4 text-sm outline-none transition focus:border-[#d5aa42]"
+        className="mt-2 h-12 w-full rounded-md border border-zinc-700 bg-[#101010] px-4 text-sm text-white outline-none transition placeholder:text-zinc-500 focus:border-[#d5aa42]"
       />
     </label>
   );

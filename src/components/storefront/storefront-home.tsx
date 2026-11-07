@@ -204,7 +204,7 @@ export default function StorefrontHome({
         </div>
       </section>
 
-      <section className="bg-[#111] py-16 text-white">
+      <section className="bg-[#181818] py-16 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <div className="mb-8 max-w-3xl">
             <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">
@@ -226,61 +226,68 @@ export default function StorefrontHome({
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeading
-            eyebrow="Latest Products"
-            title="New Arrivals"
-            copy="Fresh products from the catalog, shown with their original product images."
+      <section className="bg-[#181818] py-16 text-white sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeading
+              eyebrow="Latest Products"
+              title="New Arrivals"
+              copy="Fresh products from the catalog, shown with their original product images."
+              dark
+            />
+            <Link
+              href="/shop"
+              className="text-sm font-bold uppercase tracking-[0.16em] text-[#f4c95d] transition hover:text-white"
+            >
+              View Shop
+            </Link>
+          </div>
+          <CompactProductRow
+            products={latestProducts}
+            emptyMessage="No products yet. Add products from admin and they will appear here automatically."
+            dark
           />
-          <Link
-            href="/shop"
-            className="text-sm font-bold uppercase tracking-[0.16em] text-[#9d7415] hover:text-[#111]"
-          >
-            View Shop
-          </Link>
         </div>
-        <CompactProductRow
-          products={latestProducts}
-          emptyMessage="No products yet. Add products from admin and they will appear here automatically."
-        />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
-        <div className="mb-8">
-          <SectionHeading
-            eyebrow="Our Gallery"
-            title="Curated Visual Stories"
-            copy="Gallery images remain controlled by the existing admin dashboard and always render as a two-column layout on desktop."
-          />
-        </div>
-        {galleryItems.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2">
-            {galleryItems.map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="group relative block overflow-hidden rounded-md bg-[#f5f2eb]"
-              >
-                <img
-                  src={item.imageUrl}
-                  alt={item.categoryName}
-                  className="aspect-[16/11] w-full object-cover transition duration-500 group-hover:scale-[1.035]"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/78 to-transparent p-5 text-white">
-                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#f4c95d]">
-                    View Collection
-                  </p>
-                  <h3 className="font-heading mt-2 text-3xl font-semibold">
-                    {item.categoryName}
-                  </h3>
-                </div>
-              </Link>
-            ))}
+      <section className="bg-[#181818] py-16 text-white sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+          <div className="mb-8">
+            <SectionHeading
+              eyebrow="Our Gallery"
+              title="Curated Visual Stories"
+              copy="Gallery images remain controlled by the existing admin dashboard and always render as a two-column layout on desktop."
+              dark
+            />
           </div>
-        ) : (
-          <EmptyState message="No gallery images yet. Add them from the admin dashboard and this section will appear automatically." />
-        )}
+          {galleryItems.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {galleryItems.map((item) => (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className="group relative block overflow-hidden rounded-md bg-[#f5f2eb]"
+                >
+                  <img
+                    src={item.imageUrl}
+                    alt={item.categoryName}
+                    className="aspect-[16/11] w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/78 to-transparent p-5 text-white">
+                    <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#f4c95d]">
+                      View Collection
+                    </p>
+                    <h3 className="font-heading mt-2 text-3xl font-semibold">
+                      {item.categoryName}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState dark message="No gallery images yet. Add them from the admin dashboard and this section will appear automatically." />
+          )}
+        </div>
       </section>
 
       <StorefrontFooter categories={navCategories} />
@@ -339,7 +346,7 @@ function CompactProductRow({
                 dark ? "text-[#f4c95d]" : "text-[#9d7415]"
               }`}
             >
-              {formatPrice(product.price)}
+              {product.discountedPrice != null && product.discountedPrice < product.price ? <><span>{formatPrice(product.discountedPrice)}</span><span className="ml-2 text-xs font-medium text-stone-400 line-through">{formatPrice(product.price)}</span></> : formatPrice(product.price)}
             </p>
           </div>
         </Link>

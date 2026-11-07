@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import GalleryManager from "@/components/admin-components/gallery-manager";
 import { listCategoriesBasic } from "@/services/category.service";
 import { getGallerySection } from "@/services/gallery.service";
@@ -5,6 +6,7 @@ import { getGallerySection } from "@/services/gallery.service";
 export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
+  await requireAdmin();
   const [gallery, categories] = await Promise.all([
     getGallerySection(),
     listCategoriesBasic(),

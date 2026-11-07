@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import SubCategoryForm from "@/components/admin-components/subcategory-form";
 import { listCategoriesBasic } from "@/services/category.service";
@@ -5,6 +6,7 @@ import { listCategoriesBasic } from "@/services/category.service";
 export const dynamic = "force-dynamic";
 
 export default async function CreateSubCategoryPage() {
+  await requireAdmin();
   const categories = await listCategoriesBasic();
 
   return (

@@ -19,7 +19,8 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isApi = pathname.startsWith("/api/");
   if (isApi && pathname.startsWith("/api/customer/")) return NextResponse.next();
-  if (isApi && ["/api/admin/login", "/api/admin/logout"].includes(pathname)) return NextResponse.next();
+  if (isApi && ["/api/admin/login", "/api/admin/send-otp", "/api/admin/verify-otp", "/api/admin/logout"].includes(pathname)) return NextResponse.next();
+  if (isApi && pathname.startsWith("/api/admin/discounts") && !(await isValidSession(request.cookies.get("admin_session")?.value))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (isApi && request.method === "GET" && pathname !== "/api/admin/profile") return NextResponse.next();
   if (isApi && request.method === "POST" && ["/api/cart", "/api/orders"].includes(pathname)) return NextResponse.next();
   if (await isValidSession(request.cookies.get("admin_session")?.value)) return NextResponse.next();

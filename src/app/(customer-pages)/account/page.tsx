@@ -13,9 +13,15 @@ export default async function AccountPage() {
     select: { id: true, email: true, firstName: true, lastName: true, phone: true, address: true, city: true, postalCode: true },
   });
   if (!customer) redirect("/sign-in");
-  const [orders, addresses] = await Promise.all([
-    prisma.order.findMany({ where: { customerId: id }, include: { items: true }, orderBy: { createdAt: "desc" } }),
+  const [orders, orderCount, addresses] = await Promise.all([
+    prisma.order.findMany({
+      where: { customerId: id },
+      include: { items: true },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+    prisma.order.count({ where: { customerId: id } }),
     prisma.customerAddress.findMany({ where: { customerId: id }, orderBy: { createdAt: "desc" } }),
   ]);
-  return <CustomerDashboard customer={customer} orders={orders} addresses={addresses} />;
+  return <CustomerDashboard customer={customer} orders={orders} orderCount={orderCount} addresses={addresses} />;
 }

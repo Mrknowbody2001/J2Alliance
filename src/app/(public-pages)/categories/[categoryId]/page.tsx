@@ -35,6 +35,7 @@ export default async function MainCategoryPage({ params }: PageProps) {
         id: product.id,
         title: product.title,
         price: product.price,
+        discountedPrice: product.discount?.discountedPrice ?? null,
         image: product.thumbnail ?? product.images[0] ?? null,
         categoryName: product.category.name,
         subCategoryName: product.subCategory.name,

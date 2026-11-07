@@ -1,3 +1,4 @@
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 
@@ -25,6 +26,7 @@ const buildSignature = (params: Record<string, string>, apiSecret: string) => {
 };
 
 export async function POST(request: Request) {
+  if (!(await isAdminAuthenticated())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const apiKey = process.env.CLOUDINARY_API_KEY ?? process.env.CLOUDINARY_KEY;
     const apiSecret =

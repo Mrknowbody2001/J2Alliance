@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import { notFound } from "next/navigation";
 import ProductForm from "@/components/admin-components/product-form";
 import { listCategoriesWithSubCategories } from "@/services/category.service";
@@ -10,6 +11,7 @@ type EditProductPageProps = {
 };
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
+  await requireAdmin();
   const { id } = await params;
   const [product, categories] = await Promise.all([
     getProductById(id),

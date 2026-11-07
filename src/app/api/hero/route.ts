@@ -1,3 +1,4 @@
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { NextResponse } from "next/server";
 import {
   getHeroSection,
@@ -36,6 +37,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  if (!(await isAdminAuthenticated())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const body = await request.json();
     const parsed = heroSectionUpdateSchema.safeParse(body);

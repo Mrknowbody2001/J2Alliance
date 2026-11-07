@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ArrowRight, Check, LockKeyhole, Sparkles } from "lucide-react";
 
 export function CustomerAuthForm({ mode }: { mode: "login" | "signup" }) {
@@ -10,6 +10,19 @@ export function CustomerAuthForm({ mode }: { mode: "login" | "signup" }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const signup = mode === "signup";
+
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("error");
+    if (!code) return;
+    const messages: Record<string, string> = {
+      google_not_configured: "Google sign-in is not configured yet. Please use email and password.",
+      google_cancelled: "Google sign-in was cancelled.",
+      google_email_unverified: "Your Google account must have a verified email address.",
+      google_auth_failed: "Google sign-in could not be completed. Please try again.",
+    };
+    setError(messages[code] || "Google sign-in could not be completed. Please try again.");
+    window.history.replaceState({}, "", window.location.pathname);
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -56,7 +69,12 @@ export function CustomerAuthForm({ mode }: { mode: "login" | "signup" }) {
           <h2 className="mt-3 font-heading text-4xl font-medium">{signup ? "Create your account" : "Welcome back"}</h2>
           <p className="mt-2 text-sm text-white/50">{signup ? "Join us and keep your shopping details together." : "Sign in to continue to your customer dashboard."}</p>
 
-          <form onSubmit={submit} className="mt-8 space-y-4">
+          <a href="/api/customer/google" className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-white/15 bg-white px-5 text-sm font-semibold text-[#171717] transition hover:bg-white/90">
+            <GoogleMark /> Continue with Google
+          </a>
+          <div className="my-6 flex items-center gap-4 text-xs text-white/35"><span className="h-px flex-1 bg-white/10" />or continue with email<span className="h-px flex-1 bg-white/10" /></div>
+
+          <form onSubmit={submit} className="space-y-4">
             {signup && <div className="grid gap-4 sm:grid-cols-2">
               <Field label="First name" name="firstName" autoComplete="given-name" required />
               <Field label="Last name" name="lastName" autoComplete="family-name" required />
@@ -78,6 +96,10 @@ export function CustomerAuthForm({ mode }: { mode: "login" | "signup" }) {
       </div>
     </main>
   );
+}
+
+function GoogleMark() {
+  return <svg aria-hidden="true" viewBox="0 0 48 48" className="h-5 w-5"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5h6.6c3.9-3.6 6.1-8.8 6.1-14.9Z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.6-5c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.4H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#FBBC05" d="M12.6 27.8a12 12 0 0 1 0-7.6V15H5.8a20 20 0 0 0 0 18Z"/><path fill="#EA4335" d="M24 11.8c3 0 5.7 1 7.8 3.1l5.8-5.8A19 19 0 0 0 24 4 20 20 0 0 0 5.8 15l6.8 5.2c1.6-4.8 6.1-8.4 11.4-8.4Z"/></svg>;
 }
 
 function Field({ label, name, type = "text", autoComplete, required, minLength, hint }: { label: string; name: string; type?: string; autoComplete?: string; required?: boolean; minLength?: number; hint?: string }) {

@@ -1,6 +1,8 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import CategoryForm from "@/components/admin-components/category-form";
 
-export default function CreateCategoryPage() {
+export default async function CreateCategoryPage() {
+  await requireAdmin();
   return (
     <div className="space-y-6">
       <div>

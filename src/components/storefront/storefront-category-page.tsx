@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import StorefrontBackButton from "@/components/storefront/storefront-back-button";
 import {
   ProductCard,
   SectionHeading,
@@ -35,19 +36,11 @@ export default function StorefrontCategoryPage({
   return (
     <main className="min-h-screen bg-white text-[#111]">
       <section className="bg-[#111] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
-          <Link
-            href="/shop"
-            className="text-xs font-bold uppercase tracking-[0.24em] text-[#d5aa42] transition hover:text-[#f4c95d]"
-          >
-            Back to Shop
-          </Link>
-          <div className="mt-7 grid gap-5 lg:grid-cols-[1fr_0.72fr] lg:items-end">
-            <div>
-              <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d5aa42]">
-                Main Category
-              </p>
-              <h1 className="font-heading mt-3 text-5xl font-semibold leading-[0.95] text-white sm:text-7xl">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-10 sm:py-5">
+          <div className="grid gap-3 lg:grid-cols-[1fr_0.72fr] lg:items-center">
+            <div className="flex items-center gap-4">
+              <StorefrontBackButton />
+              <h1 className="font-heading text-4xl font-semibold leading-[0.95] text-white sm:text-6xl">
                 {categoryName}
               </h1>
             </div>
@@ -63,16 +56,13 @@ export default function StorefrontCategoryPage({
           <div className="scrollbar-none flex gap-5 overflow-x-auto pb-1">
             <Link
               href={basePath}
-              className={`group flex w-24 shrink-0 flex-col items-center gap-3 text-center transition ${
+              className={`group flex w-24 shrink-0 flex-col items-center justify-center gap-3 text-center transition ${
                 activeSubCategoryId === null
                   ? "text-[#111]"
                   : "text-[#777] hover:text-[#111]"
               }`}
             >
-              <span className={`flex aspect-square w-20 items-center justify-center rounded-full border text-xs font-bold uppercase tracking-[0.12em] ${activeSubCategoryId === null ? "border-[#111] bg-[#111] text-white" : "border-[#e5ddcb] bg-[#faf8f2]"}`}>
-                All
-              </span>
-              <span className="text-xs font-bold uppercase tracking-[0.12em]">All {categoryName}</span>
+              <span className="py-7 text-xs font-bold uppercase tracking-[0.12em]">All {categoryName}</span>
             </Link>
 
             {subcategories.map((subcategory) => {

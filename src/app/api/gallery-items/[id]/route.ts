@@ -1,3 +1,4 @@
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { NextResponse } from "next/server";
 import {
   deleteGalleryItem,
@@ -42,6 +43,7 @@ export async function GET(_request: Request, context: RouteContext) {
 }
 
 export async function PUT(request: Request, context: RouteContext) {
+  if (!(await isAdminAuthenticated())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const { id } = await context.params;
     const existing = await getGalleryItemById(id);
@@ -77,6 +79,7 @@ export async function PUT(request: Request, context: RouteContext) {
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {
+  if (!(await isAdminAuthenticated())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const { id } = await context.params;
     const existing = await getGalleryItemById(id);

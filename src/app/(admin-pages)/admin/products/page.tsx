@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import ProductTable from "@/components/admin-components/product-table";
 import { listProducts } from "@/services/product.service";
@@ -5,6 +6,7 @@ import { listProducts } from "@/services/product.service";
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
+  await requireAdmin();
   const products = await listProducts();
 
   const serializedProducts = products.map((product) => ({

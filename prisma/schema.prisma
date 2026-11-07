@@ -39,6 +39,34 @@ model Product {
   @@index([subCategoryId])
 }
 
+enum DiscountScope {
+  CATEGORY
+  SUBCATEGORY
+  PRODUCT
+}
+
+enum DiscountType {
+  PERCENTAGE
+  AMOUNT
+}
+
+model Discount {
+  id        String        @id @default(cuid())
+  name      String
+  scope     DiscountScope
+  targetId  String
+  type      DiscountType
+  value     Float
+  startsAt  DateTime
+  endsAt    DateTime
+  active    Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([active, startsAt, endsAt])
+  @@index([scope, targetId])
+}
+
 model Order {
   id          String @id @default(cuid())
   orderNumber String @unique
@@ -184,6 +212,18 @@ model AdminProfile {
   passwordHash String
   imageUrl     String?
   updatedAt    DateTime @updatedAt
+}
+
+model AdminOtpChallenge {
+  id         String   @id
+  codeHash   String
+  expiresAt  DateTime
+  resendAfter DateTime
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([expiresAt])
 }
 
 model Customer {

@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RichTextContent from "@/components/ui/rich-text-content";
@@ -18,6 +19,7 @@ type ProductDetailPageProps = {
 export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps) {
+  await requireAdmin();
   const { id } = await params;
   const product = await getProductById(id);
 

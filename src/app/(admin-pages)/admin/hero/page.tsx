@@ -1,9 +1,11 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import HeroManager from "@/components/admin-components/hero-manager";
 import { getHeroSection } from "@/services/hero.service";
 
 export const dynamic = "force-dynamic";
 
 export default async function HeroPage() {
+  await requireAdmin();
   const hero = await getHeroSection();
 
   const serializedHero = {

@@ -1,3 +1,4 @@
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { NextResponse } from "next/server";
 import { listProducts, createProduct } from "@/services/product.service";
 import { productCreateSchema } from "@/validations/product.schema";
@@ -16,6 +17,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!(await isAdminAuthenticated())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const body = await request.json();
     const parsed = productCreateSchema.safeParse(body);

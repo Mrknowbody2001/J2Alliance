@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { ProductInput } from "@/types";
+import { getDiscountForProduct, getDiscountsForProducts } from "@/services/discount.service";
 
 async function assertValidProductClassification(data: {
   categoryId: string;
@@ -20,7 +21,7 @@ async function assertValidProductClassification(data: {
 }
 
 export async function listProducts() {
-  return prisma.product.findMany({
+  const products = await prisma.product.findMany({
     orderBy: { updatedAt: "desc" },
     include: {
       category: {
@@ -37,6 +38,7 @@ export async function listProducts() {
       },
     },
   });
+  return getDiscountsForProducts(products);
 }
 
 export async function listProductsByCategory(
@@ -47,7 +49,7 @@ export async function listProductsByCategory(
     throw new Error("Category id is required.");
   }
 
-  return prisma.product.findMany({
+  const products = await prisma.product.findMany({
     where: {
       categoryId,
       ...(subCategoryId ? { subCategoryId } : {}),
@@ -68,6 +70,7 @@ export async function listProductsByCategory(
       },
     },
   });
+  return getDiscountsForProducts(products);
 }
 
 export async function getProductById(id: string) {
@@ -75,7 +78,7 @@ export async function getProductById(id: string) {
     throw new Error("Product id is required.");
   }
 
-  return prisma.product.findUnique({
+  const product = await prisma.product.findUnique({
     where: { id },
     include: {
       category: {
@@ -92,6 +95,7 @@ export async function getProductById(id: string) {
       },
     },
   });
+  return product ? { ...product, discount: await getDiscountForProduct(product) } : null;
 }
 
 export async function createProduct(data: ProductInput) {

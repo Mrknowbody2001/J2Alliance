@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import SubCategoryTable from "@/components/admin-components/subcategory-table";
 import { listSubCategories } from "@/services/subcategory.service";
@@ -5,6 +6,7 @@ import { listSubCategories } from "@/services/subcategory.service";
 export const dynamic = "force-dynamic";
 
 export default async function SubCategoriesPage() {
+  await requireAdmin();
   const subcategories = await listSubCategories();
 
   const serializedSubCategories = subcategories.map((subcategory) => ({

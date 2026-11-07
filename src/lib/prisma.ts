@@ -12,12 +12,13 @@ const createPrismaClient = () =>
         : ["error"],
   });
 
-const hasCategoryDelegates = (client: PrismaClient) =>
+const hasRequiredDelegates = (client: PrismaClient) =>
   Boolean((client as PrismaClient & { category?: unknown }).category) &&
-  Boolean((client as PrismaClient & { subCategory?: unknown }).subCategory);
+  Boolean((client as PrismaClient & { subCategory?: unknown }).subCategory) &&
+  Boolean((client as PrismaClient & { discount?: unknown }).discount);
 
 const shouldReuseGlobalClient =
-  globalForPrisma.prisma && hasCategoryDelegates(globalForPrisma.prisma);
+  globalForPrisma.prisma && hasRequiredDelegates(globalForPrisma.prisma);
 
 let prismaClient: PrismaClient;
 

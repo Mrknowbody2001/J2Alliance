@@ -36,6 +36,7 @@ export default async function HomePage() {
     title: product.title,
     description: stripRichText(product.description),
     price: product.price,
+    discountedPrice: product.discount?.discountedPrice ?? null,
     image: product.thumbnail ?? product.images[0] ?? null,
     categoryName: product.category.name,
     subCategoryName: product.subCategory.name,

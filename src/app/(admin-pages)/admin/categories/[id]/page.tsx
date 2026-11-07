@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryById } from "@/services/category.service";
@@ -11,6 +12,7 @@ type CategoryDetailPageProps = {
 export default async function CategoryDetailPage({
   params,
 }: CategoryDetailPageProps) {
+  await requireAdmin();
   const { id } = await params;
   const category = await getCategoryById(id);
 

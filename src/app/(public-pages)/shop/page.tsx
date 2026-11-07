@@ -28,6 +28,7 @@ export default async function ShopPage() {
         id: product.id,
         title: product.title,
         price: product.price,
+        discountedPrice: product.discount?.discountedPrice ?? null,
         image: product.thumbnail ?? product.images[0] ?? null,
         categoryId: product.categoryId,
         categoryName: product.category.name,

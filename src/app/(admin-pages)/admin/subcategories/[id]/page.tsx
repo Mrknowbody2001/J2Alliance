@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSubCategoryById } from "@/services/subcategory.service";
@@ -11,6 +12,7 @@ type SubCategoryDetailPageProps = {
 export default async function SubCategoryDetailPage({
   params,
 }: SubCategoryDetailPageProps) {
+  await requireAdmin();
   const { id } = await params;
   const subcategory = await getSubCategoryById(id);
 
