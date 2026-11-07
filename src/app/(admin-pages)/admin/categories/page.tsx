@@ -25,6 +25,7 @@ export default async function CategoriesPage() {
   const serializedSubCategories = subcategories.map((subcategory) => ({
     id: subcategory.id,
     name: subcategory.name,
+    imageUrl: subcategory.imageUrl,
     categoryId: subcategory.categoryId,
     categoryName: subcategory.category.name,
     createdAt: subcategory.createdAt.toISOString(),
