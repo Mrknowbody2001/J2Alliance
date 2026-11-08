@@ -9,7 +9,7 @@ const OTP_TTL_MS = 5 * 60 * 1000;
 const RESEND_COOLDOWN_MS = 60 * 1000;
 
 function hashCode(challengeId: string, code: string) {
-  const secret = process.env.ADMIN_SESSION_SECRET || process.env.DATABASE_URL;
+  const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) throw new Error("Admin session secret is not configured.");
   return createHmac("sha256", secret).update(`${challengeId}:${code}`).digest("hex");
 }

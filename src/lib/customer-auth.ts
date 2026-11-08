@@ -6,7 +6,7 @@ const COOKIE_NAME = "customer_session";
 const SESSION_TTL = 60 * 60 * 24 * 7;
 
 function sessionSecret() {
-  const value = process.env.CUSTOMER_SESSION_SECRET || process.env.ADMIN_SESSION_SECRET || process.env.DATABASE_URL;
+  const value = process.env.CUSTOMER_SESSION_SECRET;
   if (!value) throw new Error("Set CUSTOMER_SESSION_SECRET before using customer sign in.");
   return value;
 }

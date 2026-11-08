@@ -12,7 +12,7 @@ import {
 import { prisma } from "@/lib/prisma";
 
 function hashCode(challengeId: string, code: string) {
-  const secret = process.env.ADMIN_SESSION_SECRET || process.env.DATABASE_URL;
+  const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) throw new Error("Admin session secret is not configured.");
   return createHmac("sha256", secret).update(`${challengeId}:${code}`).digest("hex");
 }

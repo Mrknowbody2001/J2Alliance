@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 async function isValidSession(token?: string) {
   if (!token) return false;
   const [payload, signature] = token.split(".");
-  const secret = process.env.ADMIN_SESSION_SECRET || process.env.DATABASE_URL;
+  const secret = process.env.ADMIN_SESSION_SECRET;
   if (!payload || !signature || !secret) return false;
   try {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);

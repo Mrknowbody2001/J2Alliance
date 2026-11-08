@@ -10,7 +10,7 @@ const SESSION_TTL = 60 * 60 * 24 * 7;
 const LOGIN_CHALLENGE_TTL = 10 * 60;
 
 function secret() {
-  const value = process.env.ADMIN_SESSION_SECRET || process.env.DATABASE_URL;
+  const value = process.env.ADMIN_SESSION_SECRET;
   if (!value) throw new Error("Set ADMIN_SESSION_SECRET before using admin login.");
   return value;
 }
