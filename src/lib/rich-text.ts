@@ -1,34 +1,41 @@
-import DOMPurify from "isomorphic-dompurify";
+import xss, { type IFilterXSSOptions } from "xss";
 
-const richTextConfig = {
-  ALLOWED_TAGS: [
-    "a",
-    "b",
-    "blockquote",
-    "br",
-    "div",
-    "em",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "hr",
-    "i",
-    "li",
-    "ol",
-    "p",
-    "span",
-    "strong",
-    "u",
-    "ul",
-  ],
-  ALLOWED_ATTR: ["href", "rel", "style", "target"],
+const allowedTags = [
+  "a",
+  "b",
+  "blockquote",
+  "br",
+  "div",
+  "em",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "i",
+  "li",
+  "ol",
+  "p",
+  "span",
+  "strong",
+  "u",
+  "ul",
+];
+
+const allowedAttributes = ["href", "rel", "style", "target"];
+
+const richTextConfig: IFilterXSSOptions = {
+  whiteList: Object.fromEntries(
+    allowedTags.map((tag) => [tag, allowedAttributes])
+  ),
+  stripIgnoreTag: true,
+  stripIgnoreTagBody: ["script", "style"],
 };
 
 export function sanitizeRichText(html: string | null | undefined) {
-  return DOMPurify.sanitize(html ?? "", richTextConfig).trim();
+  return xss(html ?? "", richTextConfig).trim();
 }
 
 export function stripRichText(html: string | null | undefined) {
